@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Orlog</string>
+    <string name="symbol">⌘</string>
+    <string name="orlog">Orlog</string>
+    <string name="instructions">Game Flow</string>
+    <string name="roll_phase">Roll Phase</string>
+    <string name="roll_phase_desc">1. After flip a coin to decide who starts first, at the beginning of each round, you and your alternate between who rolls the dice.\n2. You can roll up to 3 times. You can choose which dice you want to keep and which you want to re-roll between rolling turns.</string>
+    <string name="god_favor_phase">God Favor Phase</string>
+    <string name="god_favor_phase_desc_pt1">Players can choose one God Favor to invoke, then reveal to each other their choice. God Favors are invoked in order of priority. God Favors with the same Priority are paid and applied according to the players’ order. When a God Favor is invoked, its offering</string>
+    <string name="god_favor_phase_desc_pt2">is presented, and its effect is granted. Most God Favors are invoked after both players choose them and before the Resolution phase. Exception: if it is specifically stated it in their effect description, they are invoked after the Resolution phase. If a player does not have enough</string>
+    <string name="god_favor_phase_desc_pt3">pieces for the offering when the God Favor they chose is invoked, its effects are not granted.</string>
+    <string name="resolution_phase">Resolution Phase</string>
+    <string name="resolution_phase_desc_pt1">The dice rolled by both players are resolved against each other: damage is dealt or blocked, and tokens are gained or stolen. Rounds are played until one player reduces the Health of the other to 0.\n1.Each dice faced with a golden trim earns 1</string>
+    <string name="resolution_phase_desc_pt2">token during the Resolution Phase.\n2.Axes and Arrows are resolved and their unblocked damage applied. The player who rolled first this round also attacks first.\n3.Each Hand steals 1</string>
+    <string name="resolution_phase_desc_pt3">token from the opponent.\nIf no player has reached 0 HP, they switch up their order (second becomes first) and another Round is played.</string>
+    <string name="dice_effects">Basic effects on dice</string>
+    <string name="dice_effects_desc_pt1">Each Axe and Arrow deals 1 damage, Each helmet can block 1 axe and each shield can block 1 arrow and each hand can steal 1</string>
+    <string name="dice_effects_desc_pt2">token from the opponent.</string>
+    <string name="god_favor">God Favor</string>
+    <string name="god_favor_desc_pt1">During the God Favor phase, Players can choose a God Favor. Then, in order of Priority, Players offer</string>
+    <string name="god_favor_desc_pt2">tokens to invoke a God Favor and apply its effect.</string>
+    <string name="play">Play</string>
+    <string name="one_player">1 Player</string>
+    <string name="online">Online</string>
+    <string name="two_player">2 Players</string>
+    <string name="duration">Duration</string>
+    <string name="duration_value">10-15</string>
+    <string name="hp_value">15</string>
+    <string name="hp">HP</string>
+    <string name="gods">Gods</string>
+    <string name="gods_value">3</string>
+    <string name="board_game">Board Game</string>
+    <string name="how_to_play">How to Play</string>
+    <string name="info">info</string>
+</resources>
