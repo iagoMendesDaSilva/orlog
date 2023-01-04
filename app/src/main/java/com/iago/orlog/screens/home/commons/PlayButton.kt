@@ -31,7 +31,7 @@ fun PlayButton(onPress: () -> Unit) {
             )
             .background(MaterialTheme.colors.onBackground, shape = MaterialTheme.shapes.medium)
             .padding(10.dp)
-            .clickable {  }
+            .clickable { onPress() }
     ) {
         Text(
             text = stringResource(R.string.play),

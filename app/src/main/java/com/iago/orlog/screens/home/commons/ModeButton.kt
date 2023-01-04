@@ -1,10 +1,10 @@
 package com.iago.orlog.screens.home.commons
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +12,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.utils.Mode
@@ -42,11 +45,16 @@ fun ModeButton(mode: Mode, modeSelected: MutableState<Mode>, disabled: Boolean =
                         modeSelected.value = mode
                 }
         ) {
-            Icon(
-                modifier = Modifier.size(35.dp),
-                tint = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant,
-                imageVector = mode.icon,
-                contentDescription = stringResource(mode.name)
+            Image(
+                colorFilter = ColorFilter.tint(
+                    if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
+                ),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp),
+                painter = painterResource(mode.icon),
+                contentDescription = stringResource(id = mode.name)
             )
         }
         Text(

@@ -7,6 +7,9 @@ import androidx.navigation.compose.rememberNavController
 import com.iago.orlog.screens.home.HomeScreen
 import com.iago.orlog.screens.match.MatchScreen
 import com.iago.orlog.screens.instruction.InstructionScreen
+import com.iago.orlog.utils.GameModes
+import com.iago.orlog.utils.MODES
+import com.iago.orlog.utils.Mode
 
 
 @Composable
@@ -30,6 +33,5 @@ fun Navigation() {
         composable(Screens.MatchScreen.name) {
             MatchScreen(navController)
         }
-
     }
 }

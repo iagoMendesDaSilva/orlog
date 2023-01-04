@@ -5,5 +5,4 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun MatchScreen(navController: NavHostController) {
-
 }
