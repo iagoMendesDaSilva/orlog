@@ -24,7 +24,3 @@ enum class MODES {
     TWO_PLAYER,
     ONLINE,
 }
-
-object Match {
-    var mode: MODES = MODES.ONE_PLAYER
-}

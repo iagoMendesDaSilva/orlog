@@ -32,7 +32,7 @@ fun Footer(mode: MutableState<Mode>, navController: NavHostController) {
         }
         PlayButton() {
             Match.mode = mode.value.mode
-            navController.navigate(Screens.MatchScreen.name)
+            navController.navigate(Screens.GodsScreen.name)
         }
         Row(
             Modifier
