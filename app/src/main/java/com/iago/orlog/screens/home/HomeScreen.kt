@@ -13,6 +13,7 @@ import com.iago.orlog.commons.Logo
 import com.iago.orlog.screens.home.commons.Footer
 import com.iago.orlog.screens.home.commons.Header
 import com.iago.orlog.utils.GameModes
+import com.iago.orlog.utils.Match
 
 @Composable
 fun HomeScreen(navController: NavHostController) {

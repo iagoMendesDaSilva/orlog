@@ -18,11 +18,17 @@ val Typography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp
     ),
-    subtitle1= TextStyle(
+    subtitle1 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
+    ),
+    subtitle2= TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 14.sp
     ),
+
     h1 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
