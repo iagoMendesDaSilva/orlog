@@ -1,9 +1,11 @@
 package com.iago.orlog.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.gods.GodsScreen
 import com.iago.orlog.screens.coin.CoinScreen
 import com.iago.orlog.screens.home.HomeScreen
@@ -14,6 +16,7 @@ import com.iago.orlog.screens.match.MatchScreen
 @Composable
 fun Navigation() {
 
+    val viewModel = hiltViewModel<ViewModelOrlog>()
     val navController = rememberNavController()
 
     NavHost(
@@ -22,7 +25,7 @@ fun Navigation() {
     ) {
 
         composable(Screens.HomeScreen.name) {
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel)
         }
 
         composable(Screens.InstructionScreen.name) {
@@ -30,15 +33,15 @@ fun Navigation() {
         }
 
         composable(Screens.MatchScreen.name) {
-            MatchScreen(navController)
+            MatchScreen(navController, viewModel)
         }
 
         composable(Screens.GodsScreen.name) {
-            GodsScreen(navController)
+            GodsScreen(navController, viewModel)
         }
 
         composable(Screens.CoinScreen.name) {
-            CoinScreen(navController)
+            CoinScreen(navController, viewModel)
         }
     }
 }

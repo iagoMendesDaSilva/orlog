@@ -12,16 +12,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
-import com.iago.orlog.navigation.Screens
-import com.iago.orlog.utils.COIN
 import com.iago.orlog.utils.Player
 
 @Composable
 fun Header(
     navController: NavHostController,
     player: MutableState<Player>,
-    viewModel: ViewModelOrlog,
-    onFinish:()->Unit
+    onPress:()->Unit
 ) {
     Row(
         modifier = Modifier
@@ -43,10 +40,7 @@ fun Header(
             )
         }
         ButtonConfirmGods(player.value.gods.size === 3) {
-            if (player.value.coinFace === COIN.FACE_UP) {
-                viewModel.changeTurn()
-            } else
-                onFinish()
+           onPress()
         }
     }
 }

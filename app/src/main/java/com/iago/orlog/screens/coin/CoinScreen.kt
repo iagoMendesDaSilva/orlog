@@ -1,6 +1,5 @@
 package com.iago.orlog.screens.coin
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -14,15 +13,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
+import com.iago.orlog.navigation.Screens
 import com.iago.orlog.screens.coin.commons.ButtonCoin
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.utils.COIN
+import com.iago.orlog.utils.MODES
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun CoinScreen(navController: NavHostController) {
+fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val coroutineScope = rememberCoroutineScope()
     var currentRotation = remember { mutableStateOf(0f) }
@@ -30,8 +31,6 @@ fun CoinScreen(navController: NavHostController) {
     var coinResult = remember { mutableStateOf<COIN>(COIN.UNDEFINED) }
 
     val rotation = remember { Animatable(currentRotation.value) }
-
-    val viewModel = hiltViewModel<ViewModelOrlog>()
 
     Column(
         modifier = Modifier
@@ -44,7 +43,7 @@ fun CoinScreen(navController: NavHostController) {
         Coin(rotation, coinResult.value) {
             if (decision.value != COIN.UNDEFINED && coinResult.value == COIN.UNDEFINED)
                 animation(rotation, currentRotation, coinResult, coroutineScope) {
-                   decideTurns(decision.value, coinResult.value)
+                    decideTurns(decision.value, coinResult.value, viewModel, navController)
                 }
         }
         ButtonsHeadNTail(decision)
@@ -85,9 +84,23 @@ fun ButtonsHeadNTail(decision: MutableState<COIN>) {
     }
 }
 
-fun decideTurns(decision: COIN, coinResult: COIN) {
-    val player1Turn = if(decision == coinResult) decision else getOppositeCoin(decision)
+fun decideTurns(
+    decision: COIN,
+    coinResult: COIN,
+    viewModel: ViewModelOrlog,
+    navController: NavHostController
+) {
+    val player1Turn = if (decision === coinResult) decision else getOppositeCoin(decision)
     val player2Turn = getOppositeCoin(player1Turn)
+
+    viewModel.updateTurn(coinResult)
+    viewModel.updatePlayer("coinFace", player1Turn, viewModel.player1)
+    viewModel.updatePlayer("coinFace", player2Turn, viewModel.player2)
+
+    if (viewModel.mode.value === MODES.ONE_PLAYER)
+        viewModel.iaTurn.value = getOppositeCoin(decision)
+
+    navController.navigate(Screens.GodsScreen.name)
 }
 
 fun getOppositeCoin(coin: COIN): COIN {

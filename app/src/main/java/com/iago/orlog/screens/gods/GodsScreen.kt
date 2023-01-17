@@ -1,14 +1,11 @@
 package com.iago.orlog.screens.gods
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -24,31 +21,33 @@ import kotlin.random.nextInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GodsScreen(navController: NavHostController) {
+fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
-    val viewModel = hiltViewModel<ViewModelOrlog>()
-    val player = viewModel.getCurrentPlayer()
+    var player = viewModel.getCurrentPlayer()
 
     val listState = rememberLazyStaggeredGridState()
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = viewModel.turn.value) {
-        if (viewModel.turn.value == COIN.FACE_DOWN && viewModel.mode.value == MODES.ONE_PLAYER)
+        if (viewModel.mode.value === MODES.ONE_PLAYER && viewModel.turn.value === viewModel.iaTurn.value)
             selectGods(viewModel, navController, coroutineScope, listState)
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Header(navController, player, viewModel) {
-            startMatch(navController)
+        Header(navController, player) {
+            pressConfirmButton(navController, viewModel)
         }
         ListGods(player, viewModel, listState)
     }
 }
 
-fun startMatch(navController: NavHostController) {
-    navController.navigate(Screens.InstructionScreen.name)
+fun pressConfirmButton(navController: NavHostController, viewModel: ViewModelOrlog) {
+    if (viewModel.turn.value === viewModel.player1.value.coinFace)
+        viewModel.changeTurn()
+    else
+        navController.navigate(Screens.MatchScreen.name)
 }
 
 fun getGods(): MutableList<GodIndexed> {
@@ -58,9 +57,9 @@ fun getGods(): MutableList<GodIndexed> {
         .sorted()
         .toList()
 
-    val index0 =randomInts.elementAt(0)
-    val index1 =randomInts.elementAt(1)
-    val index2 =randomInts.elementAt(2)
+    val index0 = randomInts.elementAt(0)
+    val index1 = randomInts.elementAt(1)
+    val index2 = randomInts.elementAt(2)
 
     return mutableListOf<GodIndexed>(
         GodIndexed(index0, gods[index0]),
@@ -86,46 +85,24 @@ fun selectGods(
 ) {
 
     val listGods = getGods()
+    val listIterations = mutableListOf<() -> Unit>()
 
-    val listIterations = listOf({
-        viewModel.updateGodsList(
-            viewModel.player2.value.gods,
-            true,
-            listGods[0].god,
-            viewModel
-        )
-    },
-        {
-            scrollList(listGods[0].index, coroutineScope, listState)
-        },
-        {
-            viewModel.updateGodsList(
-                viewModel.player2.value.gods,
-                true,
-                listGods[1].god,
-                viewModel
-            )
-        },
-        {
-            scrollList(listGods[1].index, coroutineScope, listState)
-        },
-        {
-            viewModel.updateGodsList(
-                viewModel.player2.value.gods,
-                true,
-                listGods[2].god,
-                viewModel
-            )
-        },
-        {
-            scrollList(listGods[2].index, coroutineScope, listState)
-        },
-        {
-            startMatch(navController)
+    listGods.forEach { godIndexed ->
+        listIterations.add {
+            scrollList(godIndexed.index, coroutineScope, listState)
         }
-    )
+        listIterations.add {
+            viewModel.updateGodsList(viewModel.player2.value.gods, true, godIndexed.god, viewModel)
+        }
+    }
+    listIterations.add {
+        scrollList(0, coroutineScope, listState)
+    }
+
+    listIterations.add {
+        pressConfirmButton(navController, viewModel)
+    }
 
     viewModel.makeDecisionDelayed(600, listIterations, coroutineScope)
-
-
 }
+

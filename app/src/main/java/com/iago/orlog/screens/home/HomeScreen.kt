@@ -9,14 +9,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.commons.Logo
 import com.iago.orlog.screens.home.commons.Footer
 import com.iago.orlog.screens.home.commons.Header
 import com.iago.orlog.utils.GameModes
-import com.iago.orlog.utils.Match
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val mode = remember { mutableStateOf(GameModes.onePlayer) }
 
@@ -27,6 +27,6 @@ fun HomeScreen(navController: NavHostController) {
     ) {
         Header(navController)
         Logo()
-        Footer(mode, navController)
+        Footer(mode, navController, viewModel)
     }
 }

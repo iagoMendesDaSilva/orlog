@@ -6,22 +6,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.navigation.Screens
 import com.iago.orlog.utils.GameModes
 import com.iago.orlog.utils.Infos
-import com.iago.orlog.utils.Match
 import com.iago.orlog.utils.Mode
 
 @Composable
 fun Footer(
     mode: MutableState<Mode>,
     navController: NavHostController,
+    viewModel: ViewModelOrlog,
 ) {
-
-    val viewModel = hiltViewModel<ViewModelOrlog>()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -40,7 +37,7 @@ fun Footer(
         }
         PlayButton() {
             viewModel.updateMode(mode.value.mode)
-            navController.navigate(Screens.GodsScreen.name)
+            navController.navigate(Screens.CoinScreen.name)
         }
         Row(
             Modifier
