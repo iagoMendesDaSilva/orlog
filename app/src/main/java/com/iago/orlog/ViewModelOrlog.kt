@@ -19,6 +19,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         name = R.string.player1,
         gods = mutableListOf(),
         coinFace = COIN.UNDEFINED,
+        tokens = 0,
     )
 
     private val initialPlayer2 = Player(
@@ -26,6 +27,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         name = R.string.player2,
         gods = mutableListOf(),
         coinFace = COIN.UNDEFINED,
+        tokens = 0,
     )
 
     var iaTurn = mutableStateOf(COIN.UNDEFINED)
@@ -45,6 +47,11 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
             coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as COIN,
         )
         playerToChange.value = newPlayer
+    }
+
+    fun getImageCoinByTurn(coin: COIN? = null): Int {
+        val value = coin ?: turn.value
+        return if (value == COIN.UNDEFINED || value == COIN.FACE_UP) R.drawable.coin_face else R.drawable.coin_no_face
     }
 
     fun updateMode(newMode: MODES) {

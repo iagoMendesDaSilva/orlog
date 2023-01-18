@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
@@ -40,7 +39,7 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Header()
-        Coin(rotation, coinResult.value) {
+        Coin(rotation, coinResult.value, viewModel) {
             if (decision.value != COIN.UNDEFINED && coinResult.value == COIN.UNDEFINED)
                 animation(rotation, currentRotation, coinResult, coroutineScope) {
                     decideTurns(decision.value, coinResult.value, viewModel, navController)

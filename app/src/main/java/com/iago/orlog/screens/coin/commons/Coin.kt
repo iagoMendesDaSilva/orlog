@@ -14,11 +14,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.iago.orlog.R
+import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.COIN
 
 @Composable
-fun Coin(rotation: Animatable<Float, AnimationVector1D>, coinResult: COIN, onPress: () -> Unit) {
+fun Coin(
+    rotation: Animatable<Float, AnimationVector1D>,
+    coinResult: COIN,
+    viewModel: ViewModelOrlog,
+    onPress: () -> Unit
+) {
     Box(
         modifier = Modifier
             .width(100.dp)
@@ -35,7 +40,7 @@ fun Coin(rotation: Animatable<Float, AnimationVector1D>, coinResult: COIN, onPre
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize(),
             contentDescription = null,
-            painter = painterResource(if (coinResult == COIN.UNDEFINED || coinResult == COIN.FACE_UP) R.drawable.coin_face else R.drawable.coin_no_face),
+            painter = painterResource(viewModel.getImageCoinByTurn(coinResult)),
         )
 
     }
