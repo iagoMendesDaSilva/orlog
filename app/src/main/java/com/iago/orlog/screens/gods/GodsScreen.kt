@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.navigation.Screens
@@ -66,7 +65,6 @@ fun getGods(): MutableList<GodIndexed> {
         GodIndexed(index1, gods[index1]),
         GodIndexed(index2, gods[index2]),
     )
-
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -81,7 +79,7 @@ fun selectGods(
     viewModel: ViewModelOrlog,
     navController: NavHostController,
     coroutineScope: CoroutineScope,
-    listState: LazyStaggeredGridState
+    listState: LazyStaggeredGridState,
 ) {
 
     val listGods = getGods()
@@ -92,7 +90,7 @@ fun selectGods(
             scrollList(godIndexed.index, coroutineScope, listState)
         }
         listIterations.add {
-            viewModel.updateGodsList(viewModel.player2.value.gods, true, godIndexed.god, viewModel)
+            viewModel.updateGodsList(viewModel.getCurrentPlayer().value.gods, true, godIndexed.god, viewModel)
         }
     }
     listIterations.add {

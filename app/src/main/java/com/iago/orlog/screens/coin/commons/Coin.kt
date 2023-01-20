@@ -4,10 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -28,6 +25,7 @@ fun Coin(
         modifier = Modifier
             .width(100.dp)
             .height(100.dp)
+            .padding(10.dp)
             .graphicsLayer {
                 rotationY = rotation.value
                 cameraDistance = 12f * density

@@ -21,7 +21,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screens.MatchScreen.name
+        startDestination = Screens.HomeScreen.name
     ) {
 
         composable(Screens.HomeScreen.name) {
