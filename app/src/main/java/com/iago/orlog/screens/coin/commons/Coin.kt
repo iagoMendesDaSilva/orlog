@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.COIN
@@ -19,12 +20,13 @@ fun Coin(
     rotation: Animatable<Float, AnimationVector1D>,
     coinResult: COIN,
     viewModel: ViewModelOrlog,
+    size: Dp,
     onPress: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .width(100.dp)
-            .height(100.dp)
+            .width(size)
+            .height(size)
             .padding(10.dp)
             .graphicsLayer {
                 rotationY = rotation.value

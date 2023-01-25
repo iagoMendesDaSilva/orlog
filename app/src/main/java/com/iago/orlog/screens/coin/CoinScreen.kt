@@ -39,7 +39,7 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Header()
-        Coin(rotation, coinResult.value, viewModel) {
+        Coin(rotation, coinResult.value, viewModel, 125.dp) {
             if (decision.value != COIN.UNDEFINED && coinResult.value == COIN.UNDEFINED)
                 animation(rotation, currentRotation, coinResult, coroutineScope) {
                     decideTurns(decision.value, coinResult.value, viewModel, navController)

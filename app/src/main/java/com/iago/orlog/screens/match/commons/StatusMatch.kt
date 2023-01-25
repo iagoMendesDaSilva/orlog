@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.R
 import com.iago.orlog.utils.Player
+import com.iago.orlog.utils.gods
 
 @Composable
 fun StatusMatch(player: Player) {

@@ -1,7 +1,7 @@
-package com.iago.orlog.screens.gods.commons
+package com.iago.orlog.screens.match.commons
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -9,12 +9,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,38 +21,73 @@ import com.iago.orlog.R
 import com.iago.orlog.utils.Favor
 import com.iago.orlog.utils.God
 
-
 @Composable
-fun GodInfo(god: God, openDialog: MutableState<Boolean>) {
+fun GodInfoMatch(
+    god: God,
+    openDialog: MutableState<Boolean>,
+    chooseGodFavor: (godFavor: Favor) -> Unit
+) {
+    val godFavor = remember { mutableStateOf<Favor?>(null) }
+
     Dialog(
         onDismissRequest = { openDialog.value = false },
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(.9f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,
                     )
                     .padding(20.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
                 Header(god, openDialog)
-                Image(
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxWidth(.9f)
-                        .fillMaxHeight(.7f),
-                    painter = painterResource(god.img),
-                    contentDescription = stringResource(id = god.name)
-                )
-                Footer(god)
+                Favors(god, godFavor)
+                ButtonChoose(godFavor, chooseGodFavor, openDialog)
             }
         },
     )
+}
+
+@Composable
+fun ButtonChoose(
+    godFavor: MutableState<Favor?>,
+    chooseGodFavor: (godFavor: Favor) -> Unit,
+    openDialog: MutableState<Boolean>
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(.9f)
+            .padding(vertical = 15.dp)
+            .background(
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colors.onBackground,
+            )
+            .border(
+                width = 1.dp,
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colors.secondary,
+            )
+            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .clickable {
+                if (godFavor.value != null){
+                    chooseGodFavor(godFavor.value!!)
+                    openDialog.value = false
+                }
+
+            }
+            .alpha(if (godFavor.value == null) .5f else 1f),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.choose),
+            color = MaterialTheme.colors.secondary,
+            style = MaterialTheme.typography.body2,
+        )
+    }
 }
 
 @Composable
@@ -66,6 +99,7 @@ fun Header(god: God, openDialog: MutableState<Boolean>) {
             tint = MaterialTheme.colors.secondary,
             modifier = Modifier
                 .align(Alignment.End)
+                .padding(bottom = 10.dp)
                 .clickable { openDialog.value = false },
         )
         Text(
@@ -85,23 +119,46 @@ fun Header(god: God, openDialog: MutableState<Boolean>) {
 }
 
 @Composable
-fun Footer(god: God) {
+fun Favors(god: God, godFavor: MutableState<Favor?>) {
     Text(
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.h2,
-        color = MaterialTheme.colors.secondary,
+        textAlign = TextAlign.End,
+        style = MaterialTheme.typography.subtitle2,
+        modifier = Modifier
+            .fillMaxWidth(.9f)
+            .padding(top = 10.dp),
+        color = MaterialTheme.colors.secondaryVariant,
         text = stringResource(R.string.priority, god.priority),
     )
-    Line()
     god.favors.forEach { favor ->
-        FavorItem(favor)
+        FavorItem(favor, godFavor)
     }
-    Line()
 }
 
 @Composable
-fun FavorItem(favor: Favor) {
-    Row() {
+fun FavorItem(favor: Favor, godFavor: MutableState<Favor?>) {
+
+    val active = godFavor.value === favor
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(.9f)
+            .padding(vertical = 8.dp)
+            .background(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colors.onBackground,
+            )
+            .border(
+                width = 1.dp,
+                shape = MaterialTheme.shapes.small,
+                color = if (active) MaterialTheme.colors.primary else MaterialTheme.colors.secondary,
+            )
+            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .clickable {
+                godFavor.value = if (active) null else favor
+            },
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             modifier = Modifier.width(30.dp),
             textAlign = TextAlign.Right,
@@ -117,21 +174,11 @@ fun FavorItem(favor: Favor) {
             text = stringResource(R.string.symbol),
         )
         Text(
+            maxLines=1,
             textAlign = TextAlign.Left,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary,
             text = stringResource(favor.description, favor.effect.toInt())
         )
     }
-}
-
-@Composable
-fun Line() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(9f)
-            .padding(vertical = 7.dp)
-            .height(1.dp)
-            .background(MaterialTheme.colors.secondary)
-    )
 }

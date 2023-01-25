@@ -20,6 +20,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         gods = mutableListOf(),
         coinFace = COIN.UNDEFINED,
         tokens = 0,
+        reroll = 3,
     )
 
     private val initialPlayer2 = Player(
@@ -28,6 +29,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         gods = mutableListOf(),
         coinFace = COIN.UNDEFINED,
         tokens = 0,
+        reroll = 3,
     )
 
     var iaTurn = mutableStateOf(COIN.UNDEFINED)
@@ -43,6 +45,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         val newPlayer = playerToChange.value.copy(
             hp = (if (property === "hp") value else playerToChange.value.hp) as Int,
             name = (if (property === "name") value else playerToChange.value.name) as Int,
+            reroll = (if (property === "reroll") value else playerToChange.value.reroll) as Int,
             gods = (if (property === "gods") value else playerToChange.value.gods) as MutableList<God>,
             coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as COIN,
         )

@@ -99,7 +99,7 @@
     <string name="desc_favor_god_heimdall" >+ %1$d Health per block</string>
     <string name="head">Head</string>
     <string name="tail">Tail</string>
-    <string name="coin">Flip a coin</string>
+    <string name="coin">Flip the coin</string>
     <string name="coin_desc">Select head or tail</string>
     <string name="shield">Shield</string>
     <string name="hand">Hand</string>
@@ -108,4 +108,5 @@
     <string name="helmet">Helmet</string>
     <string name="tokens">Tokens:</string>
     <string name="gems">Gems:</string>
+    <string name="choose">Choose</string>
 </resources>

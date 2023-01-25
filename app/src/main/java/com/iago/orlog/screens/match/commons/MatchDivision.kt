@@ -2,10 +2,7 @@ package com.iago.orlog.screens.match.commons
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,27 +26,28 @@ fun MatchDivision(viewModel: ViewModelOrlog) {
             animation(rotation, currentRotation, coroutineScope)
         firstLoad.value = false
     }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
+    Column() {
         Row(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colors.secondary)
-        ) {}
-        Coin(rotation, viewModel.turn.value, viewModel) {}
-        Row(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colors.secondary)
-        ) {}
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colors.secondary)
+            ) {}
+            Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
+            Row(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colors.secondary)
+            ) {}
+        }
     }
 }
 

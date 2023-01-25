@@ -21,6 +21,7 @@ data class Player(
     val gods: MutableList<God>,
     val coinFace: COIN,
     val tokens: Int,
+    val reroll: Int,
 )
 
 enum class DICE_FACE {
