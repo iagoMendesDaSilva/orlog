@@ -109,4 +109,9 @@
     <string name="tokens">Tokens:</string>
     <string name="gems">Gems:</string>
     <string name="choose">Choose</string>
+    <string name="select_gods_favors">Select God Favors</string>
+    <string name="won">You\'ve won</string>
+    <string name="lost">You\'ve lost</string>
+    <string name="you_are_player1">You\'re Player One</string>
+    <string name="you_are_player2">You\'re Player Two</string>
 </resources>
