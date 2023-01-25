@@ -1,32 +1,30 @@
 package com.iago.orlog.screens.match.commons
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.iago.orlog.utils.BoardDices
 import com.iago.orlog.utils.DiceSide
 
 @Composable
 fun RowDices(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTable: MutableState<MutableList<DiceSide>>
+    dicesTable: MutableState<BoardDices>
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 5.dp)
             .height(45.dp),
-        horizontalArrangement = if (dicesTable.value.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
+        horizontalArrangement = if (dicesTable.value.diceSides.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
     ) {
-        (dicesTable.value).forEachIndexed { _, item ->
+        (dicesTable.value.diceSides).forEachIndexed { index, item ->
             Image(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
@@ -35,7 +33,7 @@ fun RowDices(
                     .height(55.dp)
                     .padding(horizontal = 3.dp)
                     .clickable {
-                        selectDice(dicesSelectedPlayer, item, dicesTable)
+                        selectDice(dicesSelectedPlayer, item, dicesTable, index)
                     },
                 painter = painterResource(if (item.favor) item.imgFavor else item.img),
             )
@@ -47,19 +45,23 @@ fun RowDices(
 fun selectDice(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     item: DiceSide,
-    dicesTable: MutableState<MutableList<DiceSide>>
+    dicesTable: MutableState<BoardDices>,
+    index: Int
 ) {
     with(dicesSelectedPlayer) {
         value = (value + item.copy()).toMutableList()
     }
-    removeDice(dicesTable, item)
+    removeDice(dicesTable, item, index)
 }
 
-fun removeDice(dicesTable: MutableState<MutableList<DiceSide>>, item: DiceSide) {
+fun removeDice(dicesTable: MutableState<BoardDices>, item: DiceSide, index: Int) {
+    val positions = dicesTable.value.positions.filterIndexed { i, _ -> i != index }.toMutableList()
+    val diceSides = dicesTable.value.diceSides.filterIndexed { i, _ -> i != index }.toMutableList()
+
     with(dicesTable) {
-        value = mutableListOf<DiceSide>().apply {
-            addAll(value)
-            remove(item)
-        }
+        value = BoardDices(
+            positions = positions,
+            diceSides = diceSides,
+        )
     }
 }

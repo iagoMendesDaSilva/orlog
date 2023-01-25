@@ -19,13 +19,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Player
 
 @Composable
 fun Reroll(
     player: MutableState<Player>,
-    viewModel: ViewModelOrlog
+    onPress: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -42,7 +41,7 @@ fun Reroll(
             .padding(10.dp)
             .clickable {
                 if (player.value.reroll > 0)
-                    viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
+                    onPress()
             },
         contentAlignment = Alignment.Center,
     ) {

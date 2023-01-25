@@ -15,6 +15,11 @@ data class Dice(
     val tokenSides: List<DICE_FACE>,
 )
 
+data class BoardDices(
+    val positions: MutableList<Int>,
+    val diceSides: MutableList<DiceSide>,
+)
+
 data class Player(
     val hp: Int,
     val name: Int,
