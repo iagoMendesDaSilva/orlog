@@ -114,4 +114,10 @@
     <string name="lost">You\'ve lost</string>
     <string name="you_are_player1">You\'re Player One</string>
     <string name="you_are_player2">You\'re Player Two</string>
+    <string name="desc_shield">Block 1 Arrow.</string>
+    <string name="desc_hand">Steal 1 ⌘ from the opponent.</string>
+    <string name="desc_arrow">Deal 1 Arrow damage.</string>
+    <string name="desc_axe">Deal 1 Axe damage.</string>
+    <string name="desc_helmet">Block 1 Axe.</string>
+    <string name="gain_favor">Gain %1$d</string>
 </resources>

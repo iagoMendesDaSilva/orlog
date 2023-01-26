@@ -4,6 +4,7 @@ import com.iago.orlog.R
 
 data class DiceSide(
     val name: Int,
+    val description: Int,
     val img: Int,
     val imgFavor: Int,
     val side: DICE_FACE,
@@ -18,6 +19,10 @@ data class Dice(
 data class BoardDices(
     val positions: MutableList<Int>,
     val diceSides: MutableList<DiceSide>,
+)
+data class BoardDice(
+    val dice: Dice,
+    val diceSide: DiceSide,
 )
 
 data class Player(
@@ -35,6 +40,7 @@ enum class DICE_FACE {
     SHIELD,
     AXE,
     HAND,
+    AXE2,
 }
 
 enum class COIN {
@@ -57,6 +63,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.shield,
         imgFavor = R.drawable.shield_favor,
         favor = false,
+        description = R.string.desc_shield,
     ),
     DiceSide(
         name = R.string.hand,
@@ -64,6 +71,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.hand,
         imgFavor = R.drawable.hand_favor,
         favor = false,
+        description = R.string.desc_hand,
     ),
     DiceSide(
         name = R.string.arrow,
@@ -71,6 +79,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.arrow,
         imgFavor = R.drawable.arrow_favor,
         favor = false,
+        description = R.string.desc_arrow,
     ),
     DiceSide(
         name = R.string.axe,
@@ -78,6 +87,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.axe,
         imgFavor = R.drawable.axe_favor,
         favor = false,
+        description = R.string.desc_axe,
     ),
     DiceSide(
         name = R.string.helmet,
@@ -85,13 +95,15 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.helmet,
         imgFavor = R.drawable.helmet_favor,
         favor = false,
+        description = R.string.desc_helmet,
     ),
     DiceSide(
         name = R.string.axe,
-        side = DICE_FACE.AXE,
+        side = DICE_FACE.AXE2,
         img = R.drawable.axe,
         imgFavor = R.drawable.axe_favor,
         favor = false,
+        description = R.string.desc_axe,
     ),
 )
 
