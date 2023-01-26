@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
@@ -14,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MatchDivision(viewModel: ViewModelOrlog) {
+fun MatchDivision(viewModel: ViewModelOrlog, rotate: Boolean) {
 
     val coroutineScope = rememberCoroutineScope()
     var currentRotation = remember { mutableStateOf(0f) }
@@ -26,7 +27,7 @@ fun MatchDivision(viewModel: ViewModelOrlog) {
             animation(rotation, currentRotation, coroutineScope)
         firstLoad.value = false
     }
-    Column() {
+    Column(modifier = Modifier.rotate(if (rotate) 180f else 0f)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,

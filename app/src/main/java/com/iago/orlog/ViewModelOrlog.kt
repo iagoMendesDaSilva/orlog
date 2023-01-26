@@ -89,19 +89,6 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         viewModel.updatePlayer("gods", list)
     }
 
-    fun makeDecisionDelayed(
-        delay: Long,
-        listIterations: List<() -> Unit>,
-        coroutineScope: CoroutineScope
-    ) {
-        coroutineScope.launch {
-            listIterations.forEach {
-                it()
-                delay(delay)
-            }
-        }
-    }
-
 
 }
 

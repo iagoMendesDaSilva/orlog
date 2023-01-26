@@ -12,13 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.match.commons.*
-import com.iago.orlog.utils.BoardDices
-import com.iago.orlog.utils.DiceSide
-import com.iago.orlog.utils.Player
-import com.iago.orlog.utils.dices
+import com.iago.orlog.utils.*
 
 @Composable
 fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
+
+    val rotate = viewModel.mode.value === MODES.ONE_PLAYER && viewModel.iaTurn.value == viewModel.player1.value.coinFace
 
     val dicesTablePlayer1 = remember {
         mutableStateOf<BoardDices>(
@@ -43,7 +42,8 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(25.dp),
+            .padding(25.dp)
+            .rotate(if(rotate) 180f else 0f),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -53,7 +53,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
                 .weight(1f)
                 .rotate(180f), viewModel, viewModel.player2, dicesSelectedPlayer2, dicesTablePlayer2
         )
-        MatchDivision(viewModel)
+        MatchDivision(viewModel, rotate)
         PlayerTable(
             Modifier
                 .fillMaxHeight()

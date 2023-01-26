@@ -27,10 +27,6 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
     val active = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = player.value.gods) {
-        active.value = player.value.gods.contains(god)
-    }
-
     if (openDialog.value)
         GodInfo(god, openDialog)
 
@@ -48,8 +44,10 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
             )
             .clickable {
                 if (active.value) {
+                    active.value = false
                     viewModel.updateGodsList(player.value.gods, false, god, viewModel)
                 } else if (player.value.gods.size < 3) {
+                    active.value = true
                     viewModel.updateGodsList(player.value.gods, true, god, viewModel)
                 }
             },
