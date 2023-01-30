@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.iago.orlog.R
-import com.iago.orlog.utils.BoardDice
 import com.iago.orlog.utils.DiceSide
+import com.iago.orlog.utils.dices
 
 @Composable
-fun DiceInfo(openDialog: MutableState<Boolean>, diceBoard: MutableState<BoardDice?>) {
+fun DiceInfo(openDialog: MutableState<Boolean>, diceSide: MutableState<DiceSide?>) {
     Dialog(
         onDismissRequest = {
             openDialog.value = false
@@ -37,9 +37,9 @@ fun DiceInfo(openDialog: MutableState<Boolean>, diceBoard: MutableState<BoardDic
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
-                Header(text = diceBoard.value!!.diceSide!!.description)
-                DiceDraw(diceBoard)
-                Footer(diceBoard)
+                Header(text = diceSide.value!!.description)
+                DiceDraw(diceSide)
+                Footer(diceSide)
             }
         },
     )
@@ -55,12 +55,12 @@ fun Header(text: Int) {
 }
 
 @Composable
-fun Footer(diceBoard: MutableState<BoardDice?>) {
+fun Footer(diceSide: MutableState<DiceSide?>) {
     Row() {
         Text(
             text = stringResource(
                 R.string.gain_favor,
-                if (diceBoard.value!!.diceSide.favor) 1 else 0
+                if (diceSide.value!!.favor) 1 else 0
             ),
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary,
@@ -74,11 +74,11 @@ fun Footer(diceBoard: MutableState<BoardDice?>) {
 }
 
 @Composable
-fun DiceDraw(diceBoard: MutableState<BoardDice?>) {
+fun DiceDraw(diceSide: MutableState<DiceSide?>) {
 
-    val sides = diceBoard.value!!.dice.sides
-    val side = diceBoard.value!!.diceSide.side
-    val favorSides = diceBoard.value!!.dice.tokenSides
+    val side = diceSide.value!!.side
+    val sides = dices[diceSide.value!!.indexDice].sides
+    val favorSides = dices[diceSide.value!!.indexDice].tokenSides
 
     Column(
         modifier = Modifier.padding(vertical = 10.dp),

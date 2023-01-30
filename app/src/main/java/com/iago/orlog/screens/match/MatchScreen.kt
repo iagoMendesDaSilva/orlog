@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.match
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -17,24 +18,11 @@ import com.iago.orlog.utils.*
 @Composable
 fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
-    val rotate = viewModel.mode.value === MODES.ONE_PLAYER && viewModel.iaTurn.value == viewModel.player1.value.coinFace
+    val rotate =
+        viewModel.mode.value === MODES.ONE_PLAYER && viewModel.iaTurn.value == viewModel.player1.value.coinFace
 
-    val dicesTablePlayer1 = remember {
-        mutableStateOf<BoardDices>(
-            BoardDices(
-                diceSides = getRandomDiceSides(),
-                positions = mutableListOf(0, 1, 2, 3, 4, 5),
-            )
-        )
-    }
-    val dicesTablePlayer2 = remember {
-        mutableStateOf<BoardDices>(
-            BoardDices(
-                diceSides = getRandomDiceSides(),
-                positions = mutableListOf(0, 1, 2, 3, 4, 5),
-            )
-        )
-    }
+    val dicesTablePlayer1 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
+    val dicesTablePlayer2 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
 
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
     val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
@@ -43,7 +31,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         modifier = Modifier
             .fillMaxSize()
             .padding(25.dp)
-            .rotate(if(rotate) 180f else 0f),
+            .rotate(if (rotate) 180f else 0f),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -68,7 +56,7 @@ fun PlayerTable(
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTablePlayer: MutableState<BoardDices>
+    dicesTablePlayer: MutableState<MutableList<DiceSide>>
 ) {
     Column(
         modifier = modifier,
@@ -77,10 +65,7 @@ fun PlayerTable(
     ) {
         Reroll(player) {
             viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
-            dicesTablePlayer.value = BoardDices(
-                positions = dicesTablePlayer.value.positions,
-                diceSides = getRandomDiceSides(dicesTablePlayer.value.positions)
-            )
+            dicesTablePlayer.value = getRandomDiceSides(dicesTablePlayer.value)
         }
         Column(
             modifier = Modifier.fillMaxHeight(),
@@ -93,15 +78,24 @@ fun PlayerTable(
     }
 }
 
-fun getRandomDiceSides(positions: MutableList<Int>? = null): MutableList<DiceSide> {
-    var dices = dices.map { dice ->
+fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<DiceSide> {
+    var dices = dices.mapIndexed { index, dice ->
         val item = dice.sides[(dice.sides.indices.random())]
         val favor = dice.tokenSides.contains(item.side)
-        item.copy(favor = favor)
+        item.copy(favor = favor, indexDice = index)
     }.toMutableList()
 
-    if (positions != null)
-        dices = dices.filterIndexed { index, _ -> positions.contains(index) }.toMutableList()
+
+
+    if (diceSides != null){
+        var dicesFiltered = mutableListOf<DiceSide>()
+        dices.forEachIndexed { index, _ ->
+            val diceSide = diceSides.filter { it.indexDice == index }
+            if(!diceSide.isNullOrEmpty())
+                dicesFiltered.add(dices[index])
+        }
+        return dicesFiltered
+    }
 
     return dices
 }

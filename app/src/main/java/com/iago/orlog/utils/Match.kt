@@ -3,6 +3,7 @@ package com.iago.orlog.utils
 import com.iago.orlog.R
 
 data class DiceSide(
+    val indexDice:Int,
     val name: Int,
     val description: Int,
     val img: Int,
@@ -14,15 +15,6 @@ data class DiceSide(
 data class Dice(
     val sides: List<DiceSide>,
     val tokenSides: List<DICE_FACE>,
-)
-
-data class BoardDices(
-    val positions: MutableList<Int>,
-    val diceSides: MutableList<DiceSide>,
-)
-data class BoardDice(
-    val dice: Dice,
-    val diceSide: DiceSide,
 )
 
 data class Player(
@@ -63,6 +55,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.shield,
         imgFavor = R.drawable.shield_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_shield,
     ),
     DiceSide(
@@ -71,6 +64,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.hand,
         imgFavor = R.drawable.hand_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_hand,
     ),
     DiceSide(
@@ -79,6 +73,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.arrow,
         imgFavor = R.drawable.arrow_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_arrow,
     ),
     DiceSide(
@@ -87,6 +82,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.axe,
         imgFavor = R.drawable.axe_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_axe,
     ),
     DiceSide(
@@ -95,6 +91,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.helmet,
         imgFavor = R.drawable.helmet_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_helmet,
     ),
     DiceSide(
@@ -103,6 +100,7 @@ val diceSides = listOf<DiceSide>(
         img = R.drawable.axe,
         imgFavor = R.drawable.axe_favor,
         favor = false,
+        indexDice=0,
         description = R.string.desc_axe,
     ),
 )

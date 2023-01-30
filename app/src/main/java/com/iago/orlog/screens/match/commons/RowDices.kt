@@ -12,20 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.iago.orlog.utils.BoardDice
-import com.iago.orlog.utils.BoardDices
 import com.iago.orlog.utils.DiceSide
-import com.iago.orlog.utils.dices
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RowDices(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTable: MutableState<BoardDices>
+    dicesTable: MutableState<MutableList<DiceSide>>
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-    val diceInfo = remember { mutableStateOf<BoardDice?>(null) }
+    val diceInfo = remember { mutableStateOf<DiceSide?>(null) }
 
     if (openDialog.value && diceInfo.value != null)
         DiceInfo(openDialog, diceInfo)
@@ -35,9 +32,9 @@ fun RowDices(
             .fillMaxWidth()
             .padding(vertical = 5.dp)
             .height(45.dp),
-        horizontalArrangement = if (dicesTable.value.diceSides.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
+        horizontalArrangement = if (dicesTable.value.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
     ) {
-        (dicesTable.value.diceSides).forEachIndexed { index, item ->
+        (dicesTable.value).forEachIndexed { index, item ->
             Image(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
@@ -48,10 +45,7 @@ fun RowDices(
                     .combinedClickable(
                         onClick = { selectDice(dicesSelectedPlayer, item, dicesTable, index) },
                         onLongClick = {
-                            diceInfo.value = BoardDice(
-                                dice = dices[dicesTable.value.positions[index]],
-                                diceSide = item
-                            )
+                            diceInfo.value = item
                             openDialog.value = true
                         }
                     ),
@@ -65,7 +59,7 @@ fun RowDices(
 fun selectDice(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     item: DiceSide,
-    dicesTable: MutableState<BoardDices>,
+    dicesTable: MutableState<MutableList<DiceSide>>,
     index: Int
 ) {
     with(dicesSelectedPlayer) {
@@ -74,14 +68,10 @@ fun selectDice(
     removeDice(dicesTable, item, index)
 }
 
-fun removeDice(dicesTable: MutableState<BoardDices>, item: DiceSide, index: Int) {
-    val positions = dicesTable.value.positions.filterIndexed { i, _ -> i != index }.toMutableList()
-    val diceSides = dicesTable.value.diceSides.filterIndexed { i, _ -> i != index }.toMutableList()
+fun removeDice(dicesTable: MutableState<MutableList<DiceSide>>, item: DiceSide, index: Int) {
+    val dicesTableFiltered = dicesTable.value.filterIndexed { i, _ -> i != index }.toMutableList()
 
     with(dicesTable) {
-        value = BoardDices(
-            positions = positions,
-            diceSides = diceSides,
-        )
+        value = dicesTableFiltered
     }
 }
