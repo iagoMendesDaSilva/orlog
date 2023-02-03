@@ -4,26 +4,23 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.PathEffect.Companion.dashPathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.utils.DiceSide
+import com.iago.orlog.utils.Player
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RowDices(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     dicesTable: MutableState<MutableList<DiceSide>>,
-    rotate: Boolean
+    rotate: Boolean,
+    player: MutableState<Player>,
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
@@ -31,6 +28,10 @@ fun RowDices(
 
     if (openDialog.value && diceInfo.value != null)
         DiceInfo(openDialog, diceInfo, rotate)
+
+    LaunchedEffect(key1 = player.value) {
+       selectDicesAutomatic(player, dicesTable, dicesSelectedPlayer)
+    }
 
     Row(
         modifier = Modifier
@@ -70,6 +71,19 @@ fun RowDices(
     }
 }
 
+fun selectDicesAutomatic(
+    player: MutableState<Player>,
+    dicesTable: MutableState<MutableList<DiceSide>>,
+    dicesSelectedPlayer: MutableState<List<DiceSide>>
+) {
+    if (player.value.reroll == 0){
+        dicesTable.value.forEachIndexed { index, item ->
+            selectDice(dicesSelectedPlayer, item, dicesTable, index)
+        }
+        dicesTable.value = mutableListOf()
+    }
+}
+
 fun selectDice(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     item: DiceSide,
@@ -79,10 +93,10 @@ fun selectDice(
     with(dicesSelectedPlayer) {
         value = (value + item.copy()).toMutableList()
     }
-    removeDice(dicesTable, item, index)
+    removeDice(dicesTable, index)
 }
 
-fun removeDice(dicesTable: MutableState<MutableList<DiceSide>>, item: DiceSide, index: Int) {
+fun removeDice(dicesTable: MutableState<MutableList<DiceSide>>, index: Int) {
     val dicesTableFiltered = dicesTable.value.filterIndexed { i, _ -> i != index }.toMutableList()
 
     with(dicesTable) {

@@ -2,10 +2,7 @@ package com.iago.orlog.screens.match
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -27,7 +24,6 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
     val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
-
 
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
@@ -80,7 +76,7 @@ fun PlayerTable(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate)
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate, player)
             RowSelectedDices(dicesSelectedPlayer.value)
             FooterStatus(player.value, rotate)
         }
