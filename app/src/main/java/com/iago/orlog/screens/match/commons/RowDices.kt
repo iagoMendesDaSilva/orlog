@@ -22,18 +22,15 @@ import com.iago.orlog.utils.DiceSide
 @Composable
 fun RowDices(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTable: MutableState<MutableList<DiceSide>>
+    dicesTable: MutableState<MutableList<DiceSide>>,
+    rotate: Boolean
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
     val diceInfo = remember { mutableStateOf<DiceSide?>(null) }
 
     if (openDialog.value && diceInfo.value != null)
-        DiceInfo(openDialog, diceInfo)
-
-    val strokeColor = MaterialTheme.colors.primary
-    val strokeDashed =
-        Stroke(width = 1.5f, pathEffect = dashPathEffect(floatArrayOf(10f, 10f), 0f))
+        DiceInfo(openDialog, diceInfo, rotate)
 
     Row(
         modifier = Modifier

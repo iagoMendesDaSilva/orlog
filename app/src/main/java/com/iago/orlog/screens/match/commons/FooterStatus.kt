@@ -11,7 +11,7 @@ import com.iago.orlog.utils.Player
 import com.iago.orlog.utils.gods
 
 @Composable
-fun FooterStatus(player: Player) {
+fun FooterStatus(player: Player, rotate: Boolean) {
     Row {
         Column(
             modifier = Modifier
@@ -22,6 +22,7 @@ fun FooterStatus(player: Player) {
             EndTurnButton(true,) {}
         }
         GodsList(
+            rotate,
             player.godFavors,
             Modifier
                 .fillMaxWidth()

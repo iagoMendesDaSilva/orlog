@@ -1,6 +1,5 @@
 package com.iago.orlog.screens.match.commons
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,20 +14,18 @@ import androidx.compose.ui.unit.dp
 import com.iago.orlog.utils.God
 
 @Composable
-fun GodsList(testGods: List<God>, modifier: Modifier) {
+fun GodsList(rotate: Boolean, godFavors: List<God>, modifier: Modifier) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        testGods.forEach {
+        godFavors.forEach { godFavor ->
 
             val openDialog = remember { mutableStateOf(false) }
 
             if (openDialog.value)
-                GodInfoMatch(it, openDialog){
-                    Log.d("TAG", it.cost.toString())
-                }
+                GodInfoMatch(godFavor, openDialog, rotate){}
             Image(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
@@ -39,7 +36,7 @@ fun GodsList(testGods: List<God>, modifier: Modifier) {
                     .padding(horizontal = 3.dp).clickable {
                         openDialog.value = true
                     },
-                painter = painterResource(it.img),
+                painter = painterResource(godFavor.img),
             )
         }
     }

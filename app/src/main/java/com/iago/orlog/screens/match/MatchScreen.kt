@@ -32,7 +32,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
     }
 
@@ -45,6 +45,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PlayerTable(
+            !rotate,
             Modifier
                 .fillMaxHeight()
                 .weight(1f)
@@ -52,6 +53,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         )
         MatchDivision(viewModel, rotate, rotation, currentRotation)
         PlayerTable(
+            rotate,
             Modifier
                 .fillMaxHeight()
                 .weight(1f), viewModel, viewModel.player1, dicesSelectedPlayer1, dicesTablePlayer1
@@ -61,6 +63,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
 @Composable
 fun PlayerTable(
+    rotate: Boolean,
     modifier: Modifier,
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
@@ -77,9 +80,9 @@ fun PlayerTable(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer)
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate)
             RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player.value)
+            FooterStatus(player.value, rotate)
         }
     }
 }

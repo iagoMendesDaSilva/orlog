@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import com.iago.orlog.utils.God
 fun GodInfoMatch(
     god: God,
     openDialog: MutableState<Boolean>,
+    rotate: Boolean,
     chooseGodFavor: (godFavor: Favor) -> Unit
 ) {
     val godFavor = remember { mutableStateOf<Favor?>(null) }
@@ -35,6 +37,7 @@ fun GodInfoMatch(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .rotate(if(rotate)180f else 0f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,
@@ -43,9 +46,9 @@ fun GodInfoMatch(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
-                Header(god, openDialog)
-                Favors(god, godFavor)
-                ButtonChoose(godFavor, chooseGodFavor, openDialog)
+                    Header(god, openDialog)
+                    Favors(god, godFavor)
+                    ButtonChoose(godFavor, chooseGodFavor, openDialog)
             }
         },
     )
@@ -72,7 +75,7 @@ fun ButtonChoose(
             )
             .padding(vertical = 10.dp, horizontal = 20.dp)
             .clickable {
-                if (godFavor.value != null){
+                if (godFavor.value != null) {
                     chooseGodFavor(godFavor.value!!)
                     openDialog.value = false
                 }

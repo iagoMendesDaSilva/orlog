@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,7 +23,11 @@ import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.dices
 
 @Composable
-fun DiceInfo(openDialog: MutableState<Boolean>, diceSide: MutableState<DiceSide?>) {
+fun DiceInfo(
+    openDialog: MutableState<Boolean>,
+    diceSide: MutableState<DiceSide?>,
+    rotate: Boolean
+) {
     Dialog(
         onDismissRequest = {
             openDialog.value = false
@@ -34,7 +39,8 @@ fun DiceInfo(openDialog: MutableState<Boolean>, diceSide: MutableState<DiceSide?
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,
                     )
-                    .padding(20.dp),
+                    .padding(20.dp)
+                    .rotate(if (rotate) 180f else 0f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
 
