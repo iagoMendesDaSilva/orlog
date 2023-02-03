@@ -45,10 +45,10 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
             .clickable {
                 if (active.value) {
                     active.value = false
-                    viewModel.updateGodsList(player.value.gods, false, god, viewModel)
-                } else if (player.value.gods.size < 3) {
+                    viewModel.updateGodsList(player.value.godFavors, false, god, viewModel)
+                } else if (player.value.godFavors.size < 3) {
                     active.value = true
-                    viewModel.updateGodsList(player.value.gods, true, god, viewModel)
+                    viewModel.updateGodsList(player.value.godFavors, true, god, viewModel)
                 }
             },
         verticalArrangement = Arrangement.Center,

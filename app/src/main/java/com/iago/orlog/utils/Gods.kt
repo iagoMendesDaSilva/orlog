@@ -21,11 +21,6 @@ open class God(
     }
 }
 
-open class GodIndexed(
-    val index: Int,
-    val god: God,
-)
-
 val gods = listOf<God>(
     God(
         img = R.drawable.god_thor,
@@ -60,7 +55,7 @@ val gods = listOf<God>(
             Favor(4, 4f, R.string.desc_favor_god_vidar),
             Favor(6, 6f, R.string.desc_favor_god_vidar),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_vidar
     ),
     God(
@@ -72,7 +67,7 @@ val gods = listOf<God>(
             Favor(3, 3f, R.string.desc_favor_god_ullr),
             Favor(4, 6f, R.string.desc_favor_god_ullr),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_ullr
     ),
     God(
@@ -84,7 +79,7 @@ val gods = listOf<God>(
             Favor(7, 2f, R.string.desc_favor_god_heimdall),
             Favor(10, 3f, R.string.desc_favor_god_heimdall),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_heimdall
     ),
     God(
@@ -96,7 +91,7 @@ val gods = listOf<God>(
             Favor(6, 2f, R.string.desc_favor_god_baldr),
             Favor(9, 3f, R.string.desc_favor_god_baldr),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_baldr
     ),
     God(
@@ -108,7 +103,7 @@ val gods = listOf<God>(
             Favor(10, 2f, R.string.desc_favor_god_brunhild),
             Favor(18, 3f, R.string.desc_favor_god_brunhild),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_brunhild
     ),
     God(
@@ -120,7 +115,7 @@ val gods = listOf<God>(
             Favor(6, 3f, R.string.desc_favor_god_freyr),
             Favor(8, 4f, R.string.desc_favor_god_freyr),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_freyr
     ),
     God(
@@ -132,7 +127,7 @@ val gods = listOf<God>(
             Favor(12, 2f, R.string.desc_favor_god_hel),
             Favor(18, 3f, R.string.desc_favor_god_hel),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_hel
     ),
     God(
@@ -144,7 +139,7 @@ val gods = listOf<God>(
             Favor(10, 2f, R.string.desc_favor_god_skadi),
             Favor(14, 3f, R.string.desc_favor_god_skadi),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_skadi
     ),
     God(
@@ -156,7 +151,7 @@ val gods = listOf<God>(
             Favor(6, 3f, R.string.desc_favor_god_skuld),
             Favor(8, 4f, R.string.desc_favor_god_skuld),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_skuld
     ),
     God(
@@ -168,7 +163,7 @@ val gods = listOf<God>(
             Favor(3, 3f, R.string.desc_favor_god_frigg),
             Favor(4, 4f, R.string.desc_favor_god_frigg),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_frigg
     ),
     God(
@@ -180,7 +175,7 @@ val gods = listOf<God>(
             Favor(6, 2f, R.string.desc_favor_god_loki),
             Favor(9, 3f, R.string.desc_favor_god_loki),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_loki
     ),
     God(
@@ -192,7 +187,7 @@ val gods = listOf<God>(
             Favor(4, 2f, R.string.desc_favor_god_freyja),
             Favor(6, 3f, R.string.desc_favor_god_freyja),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_freyja,
     ),
     God(
@@ -204,7 +199,7 @@ val gods = listOf<God>(
             Favor(5, 2f, R.string.desc_favor_god_mimir),
             Favor(7, 3f, R.string.desc_favor_god_mimir),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_mimir
     ),
     God(
@@ -216,7 +211,7 @@ val gods = listOf<God>(
             Favor(8, 3f, R.string.desc_favor_god_bragi),
             Favor(12, 4f, R.string.desc_favor_god_bragi),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_bragi
     ),
     God(
@@ -240,7 +235,7 @@ val gods = listOf<God>(
             Favor(14, 2f, R.string.desc_favor_god_var),
             Favor(18, 3f, R.string.desc_favor_god_var),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_var,
     ),
     God(
@@ -252,7 +247,7 @@ val gods = listOf<God>(
             Favor(6, 2f, R.string.desc_favor_god_thrymr),
             Favor(9, 3f, R.string.desc_favor_god_thrymr),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_thrymr,
     ),
     God(
@@ -264,7 +259,7 @@ val gods = listOf<God>(
             Favor(6, 3f, R.string.desc_favor_god_tyr),
             Favor(8, 4f, R.string.desc_favor_god_tyr),
         ),
-        useBeforeResolution = false,
+        useBeforeResolution = true,
         description = R.string.desc_god_tyr
     )
 )

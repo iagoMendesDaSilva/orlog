@@ -2,7 +2,9 @@ package com.iago.orlog.screens.match.commons
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -77,8 +79,8 @@ fun Footer(diceSide: MutableState<DiceSide?>) {
 fun DiceDraw(diceSide: MutableState<DiceSide?>) {
 
     val side = diceSide.value!!.side
-    val sides = dices[diceSide.value!!.indexDice].sides
-    val favorSides = dices[diceSide.value!!.indexDice].tokenSides
+    val sides = dices[diceSide.value!!.idDice].sides
+    val favorSides = dices[diceSide.value!!.idDice].tokenSides
 
     Column(
         modifier = Modifier.padding(vertical = 10.dp),
@@ -99,14 +101,35 @@ fun DiceDraw(diceSide: MutableState<DiceSide?>) {
 
 @Composable
 fun ImageDiceSide(diceSide: DiceSide, active: Boolean, favor: Boolean) {
-    Image(
-        contentDescription = null,
-        contentScale = ContentScale.Fit,
+
+    Box(
         modifier = Modifier
             .width(55.dp)
             .height(55.dp)
-            .padding(5.dp)
-            .alpha(if (active) 1f else .5f),
-        painter = painterResource(if (favor) diceSide.imgFavor else diceSide.img),
-    )
+            .padding(3.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (favor)
+            DashedStroke()
+        else
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        1.dp,
+                        if (active) MaterialTheme.colors.secondary else MaterialTheme.colors.secondaryVariant,
+                        RoundedCornerShape(5.dp)
+                    )
+            ) {}
+        Image(
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .width(55.dp)
+                .height(55.dp)
+                .padding(5.dp)
+                .alpha(if (active) 1f else .5f),
+            painter = painterResource(diceSide.img),
+        )
+    }
 }

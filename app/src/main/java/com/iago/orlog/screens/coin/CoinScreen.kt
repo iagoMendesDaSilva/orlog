@@ -18,7 +18,7 @@ import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.navigation.Screens
 import com.iago.orlog.screens.coin.commons.ButtonCoin
 import com.iago.orlog.screens.coin.commons.Coin
-import com.iago.orlog.utils.COIN
+import com.iago.orlog.utils.Coin
 import com.iago.orlog.utils.MODES
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,8 +30,8 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val coroutineScope = rememberCoroutineScope()
     var played = remember { mutableStateOf(false) }
     var currentRotation = remember { mutableStateOf(0f) }
-    var decision = remember { mutableStateOf<COIN>(COIN.UNDEFINED) }
-    var coinResult = remember { mutableStateOf<COIN>(COIN.UNDEFINED) }
+    var decision = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
+    var coinResult = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
 
     val rotation = remember { Animatable(currentRotation.value) }
 
@@ -44,7 +44,7 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     ) {
         Header(decision.value, coinResult.value, played.value)
         Coin(rotation, coinResult.value, viewModel, 125.dp) {
-            if (decision.value != COIN.UNDEFINED && coinResult.value == COIN.UNDEFINED)
+            if (decision.value != Coin.UNDEFINED && coinResult.value == Coin.UNDEFINED)
                 animation(rotation, currentRotation, coinResult, coroutineScope) {
                     decideTurns(decision.value, coinResult.value, viewModel, played)
                 }
@@ -85,7 +85,7 @@ fun ButtonChooseGodFavors(navController: NavHostController) {
 }
 
 @Composable
-fun Header(decision: COIN, coinResult: COIN, played: Boolean) {
+fun Header(decision: Coin, coinResult: Coin, played: Boolean) {
 
     val winOrLose = if (decision === coinResult) R.string.won else R.string.lost
     val player = if (decision === coinResult) R.string.you_are_player1 else R.string.you_are_player2
@@ -106,26 +106,26 @@ fun Header(decision: COIN, coinResult: COIN, played: Boolean) {
 }
 
 @Composable
-fun ButtonsHeadNTail(decision: MutableState<COIN>) {
+fun ButtonsHeadNTail(decision: MutableState<Coin>) {
     Row() {
         ButtonCoin(
             text = R.string.head,
-            active = decision.value == COIN.FACE_UP
+            active = decision.value == Coin.FACE_UP
         ) {
-            decision.value = COIN.FACE_UP
+            decision.value = Coin.FACE_UP
         }
         ButtonCoin(
             text = R.string.tail,
-            active = decision.value == COIN.FACE_DOWN
+            active = decision.value == Coin.FACE_DOWN
         ) {
-            decision.value = COIN.FACE_DOWN
+            decision.value = Coin.FACE_DOWN
         }
     }
 }
 
 fun decideTurns(
-    decision: COIN,
-    coinResult: COIN,
+    decision: Coin,
+    coinResult: Coin,
     viewModel: ViewModelOrlog,
     played: MutableState<Boolean>
 ) {
@@ -142,20 +142,20 @@ fun decideTurns(
     played.value = true
 }
 
-fun getOppositeCoin(coin: COIN): COIN {
-    return if (coin == COIN.FACE_UP) COIN.FACE_DOWN else COIN.FACE_UP
+fun getOppositeCoin(coin: Coin): Coin {
+    return if (coin == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
 }
 
 fun animation(
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>,
-    coinResult: MutableState<COIN>,
+    coinResult: MutableState<Coin>,
     coroutineScope: CoroutineScope,
     callBack: () -> Unit,
 ) {
     coroutineScope.launch {
 
-        coinResult.value = COIN.FACE_UP
+        coinResult.value = Coin.FACE_UP
         val random = (5..10).random()
 
         rotation.animateTo(
@@ -168,7 +168,7 @@ fun animation(
         ) {
             currentRotation.value = value
             coinResult.value =
-                if (coinResult.value == COIN.FACE_UP) COIN.FACE_DOWN else COIN.FACE_UP
+                if (coinResult.value == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
         }
         callBack()
     }

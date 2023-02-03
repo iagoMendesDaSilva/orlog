@@ -12,7 +12,7 @@
     <string name="resolution_phase">Resolution Phase</string>
     <string name="resolution_phase_desc_pt1">The dice rolled by both players are resolved against each other: damage is dealt or blocked, and tokens are gained or stolen. Rounds are played until one player reduces the Health of the other to 0.\n1.Each dice faced with a golden trim earns 1</string>
     <string name="resolution_phase_desc_pt2">token during the Resolution Phase.\n2.Axes and Arrows are resolved and their unblocked damage applied. The player who rolled first this round also attacks first.\n3.Each Hand steals 1</string>
-    <string name="resolution_phase_desc_pt3">token from the opponent.\nIf no player has reached 0 HP, they switch up their order (second becomes first) and another Round is played.</string>
+    <string name="resolution_phase_desc_pt3">token from the opponent.\nIf no player has reached 0 gem, they switch up their order (second becomes first) and another Round is played.</string>
     <string name="dice_effects">Basic effects on dice</string>
     <string name="dice_effects_desc_pt1">Each Axe and Arrow deals 1 damage, Each helmet can block 1 axe and each shield can block 1 arrow and each hand can steal 1</string>
     <string name="dice_effects_desc_pt2">token from the opponent.</string>
@@ -25,10 +25,10 @@
     <string name="two_player">2 Players</string>
     <string name="duration">Duration</string>
     <string name="duration_value">10-15</string>
-    <string name="hp_value">15</string>
-    <string name="hp">HP</string>
-    <string name="gods">Gods</string>
-    <string name="gods_value">3</string>
+    <string name="gems_value">15</string>
+    <string name="gems">Gems</string>
+    <string name="god_favors">God Favors</string>
+    <string name="god_favors_value">3</string>
     <string name="board_game">Board Game</string>
     <string name="how_to_play">How to Play</string>
     <string name="info">info</string>
@@ -106,8 +106,7 @@
     <string name="arrow">Arrow</string>
     <string name="axe">Axe</string>
     <string name="helmet">Helmet</string>
-    <string name="tokens">Tokens:</string>
-    <string name="gems">Gems:</string>
+    <string name="tokens">Tokens</string>
     <string name="choose">Choose</string>
     <string name="select_gods_favors">Select God Favors</string>
     <string name="won">You\'ve won</string>
@@ -120,4 +119,7 @@
     <string name="desc_axe">Deal 1 Axe damage.</string>
     <string name="desc_helmet">Block 1 Axe.</string>
     <string name="gain_favor">Gain %1$d</string>
+    <string name="roll_again">Roll again</string>
+    <string name="roll_remaining">%1$d Remaining</string>
+    <string name="end_turn">End Turn</string>
 </resources>

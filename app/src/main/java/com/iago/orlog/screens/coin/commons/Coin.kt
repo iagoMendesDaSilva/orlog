@@ -13,12 +13,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
-import com.iago.orlog.utils.COIN
+import com.iago.orlog.utils.Coin
 
 @Composable
 fun Coin(
     rotation: Animatable<Float, AnimationVector1D>,
-    coinResult: COIN,
+    coinResult: Coin,
     viewModel: ViewModelOrlog,
     size: Dp,
     onPress: () -> Unit

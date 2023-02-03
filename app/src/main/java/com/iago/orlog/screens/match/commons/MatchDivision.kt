@@ -10,16 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
-import com.iago.orlog.screens.coin.commons.Coin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MatchDivision(viewModel: ViewModelOrlog, rotate: Boolean) {
+fun MatchDivision(
+    viewModel: ViewModelOrlog,
+    rotate: Boolean,
+    rotation: Animatable<Float, AnimationVector1D>,
+    currentRotation: MutableState<Float>
+) {
 
     val coroutineScope = rememberCoroutineScope()
-    var currentRotation = remember { mutableStateOf(0f) }
-    val rotation = remember { Animatable(currentRotation.value) }
     val firstLoad = remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = viewModel.turn.value) {
@@ -27,7 +29,10 @@ fun MatchDivision(viewModel: ViewModelOrlog, rotate: Boolean) {
             animation(rotation, currentRotation, coroutineScope)
         firstLoad.value = false
     }
-    Column(modifier = Modifier.rotate(if (rotate) 180f else 0f)) {
+
+    Column(modifier = Modifier
+        .rotate(if (rotate) 180f else 0f)
+        .padding(vertical = 20.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -39,8 +44,8 @@ fun MatchDivision(viewModel: ViewModelOrlog, rotate: Boolean) {
                     .fillMaxWidth()
                     .weight(1f)
                     .background(MaterialTheme.colors.secondary)
-            ) {}
-            Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
+            ) {    }
+            Box(modifier = Modifier.width(100.dp))
             Row(
                 modifier = Modifier
                     .height(2.dp)

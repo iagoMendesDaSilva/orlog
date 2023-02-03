@@ -14,10 +14,10 @@ object Infos {
             title = R.string.duration,
             icon = Icons.Default.HourglassBottom
         )
-    val hp =
-        Info(value = R.string.hp_value, title = R.string.hp, icon = Icons.Default.Favorite)
-    val gods =
-        Info(value = R.string.gods_value, title = R.string.gods, icon = Icons.Default.SwitchAccount)
+    val gems =
+        Info(value = R.string.gems_value, title = R.string.gems, icon = Icons.Default.Favorite)
+    val godFavors =
+        Info(value = R.string.god_favors_value, title = R.string.god_favors, icon = Icons.Default.SwitchAccount)
 }
 
 data class Info(

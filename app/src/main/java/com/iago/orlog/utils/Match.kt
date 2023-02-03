@@ -2,31 +2,22 @@ package com.iago.orlog.utils
 
 import com.iago.orlog.R
 
-data class DiceSide(
-    val indexDice:Int,
-    val name: Int,
-    val description: Int,
-    val img: Int,
-    val imgFavor: Int,
-    val side: DICE_FACE,
-    var favor: Boolean,
-)
-
-data class Dice(
-    val sides: List<DiceSide>,
-    val tokenSides: List<DICE_FACE>,
-)
+enum class Coin {
+    FACE_UP,
+    FACE_DOWN,
+    UNDEFINED,
+}
 
 data class Player(
-    val hp: Int,
+    val gems: Int,
     val name: Int,
-    val gods: MutableList<God>,
-    val coinFace: COIN,
+    val godFavors: MutableList<God>,
+    val coinFace: Coin,
     val tokens: Int,
     val reroll: Int,
 )
 
-enum class DICE_FACE {
+enum class DiceFace {
     HELMET,
     ARROW,
     SHIELD,
@@ -35,15 +26,23 @@ enum class DICE_FACE {
     AXE2,
 }
 
-enum class COIN {
-    FACE_UP,
-    FACE_DOWN,
-    UNDEFINED,
-}
+data class DiceSide(
+    val idDice:Int,
+    val name: Int,
+    val description: Int,
+    val img: Int,
+    val side: DiceFace,
+    var favor: Boolean,
+)
+
+data class Dice(
+    val sides: List<DiceSide>,
+    val tokenSides: List<DiceFace>,
+)
 
 class Match(
     var mode: MODES,
-    var turn: COIN,
+    var turn: Coin,
     var player1: Player,
     val player2: Player,
 ) {}
@@ -51,56 +50,50 @@ class Match(
 val diceSides = listOf<DiceSide>(
     DiceSide(
         name = R.string.shield,
-        side = DICE_FACE.SHIELD,
+        side = DiceFace.SHIELD,
         img = R.drawable.shield,
-        imgFavor = R.drawable.shield_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_shield,
     ),
     DiceSide(
         name = R.string.hand,
-        side = DICE_FACE.HAND,
+        side = DiceFace.HAND,
         img = R.drawable.hand,
-        imgFavor = R.drawable.hand_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_hand,
     ),
     DiceSide(
         name = R.string.arrow,
-        side = DICE_FACE.ARROW,
+        side = DiceFace.ARROW,
         img = R.drawable.arrow,
-        imgFavor = R.drawable.arrow_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_arrow,
     ),
     DiceSide(
         name = R.string.axe,
-        side = DICE_FACE.AXE,
+        side = DiceFace.AXE,
         img = R.drawable.axe,
-        imgFavor = R.drawable.axe_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_axe,
     ),
     DiceSide(
         name = R.string.helmet,
-        side = DICE_FACE.HELMET,
+        side = DiceFace.HELMET,
         img = R.drawable.helmet,
-        imgFavor = R.drawable.helmet_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_helmet,
     ),
     DiceSide(
         name = R.string.axe,
-        side = DICE_FACE.AXE2,
+        side = DiceFace.AXE2,
         img = R.drawable.axe,
-        imgFavor = R.drawable.axe_favor,
         favor = false,
-        indexDice=0,
+        idDice=0,
         description = R.string.desc_axe,
     ),
 )
@@ -109,43 +102,43 @@ val dices = mutableListOf<Dice>(
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.ARROW,
-            DICE_FACE.HELMET,
+            DiceFace.ARROW,
+            DiceFace.HELMET,
         ),
     ),
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.SHIELD,
-            DICE_FACE.HELMET,
+            DiceFace.SHIELD,
+            DiceFace.HELMET,
         ),
     ),
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.HAND,
-            DICE_FACE.HELMET,
+            DiceFace.HAND,
+            DiceFace.HELMET,
         ),
     ),
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.SHIELD,
-            DICE_FACE.ARROW,
+            DiceFace.SHIELD,
+            DiceFace.ARROW,
         ),
     ),
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.SHIELD,
-            DICE_FACE.HAND,
+            DiceFace.SHIELD,
+            DiceFace.HAND,
         ),
     ),
     Dice(
         sides = diceSides,
         tokenSides = listOf(
-            DICE_FACE.HAND,
-            DICE_FACE.ARROW,
+            DiceFace.HAND,
+            DiceFace.ARROW,
         ),
     ),
 )

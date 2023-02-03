@@ -31,8 +31,8 @@ fun Footer(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             InfoDesc(Infos.duration)
-            InfoDesc(Infos.gods)
-            InfoDesc(Infos.hp)
+            InfoDesc(Infos.godFavors)
+            InfoDesc(Infos.gems)
 
         }
         PlayButton() {

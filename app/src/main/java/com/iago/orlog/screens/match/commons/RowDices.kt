@@ -1,14 +1,18 @@
 package com.iago.orlog.screens.match.commons
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.PathEffect.Companion.dashPathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +31,10 @@ fun RowDices(
     if (openDialog.value && diceInfo.value != null)
         DiceInfo(openDialog, diceInfo)
 
+    val strokeColor = MaterialTheme.colors.primary
+    val strokeDashed =
+        Stroke(width = 1.5f, pathEffect = dashPathEffect(floatArrayOf(10f, 10f), 0f))
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,13 +43,12 @@ fun RowDices(
         horizontalArrangement = if (dicesTable.value.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
     ) {
         (dicesTable.value).forEachIndexed { index, item ->
-            Image(
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
+            Box(
                 modifier = Modifier
                     .width(55.dp)
                     .height(55.dp)
                     .padding(horizontal = 3.dp)
+                    .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
                         onClick = { selectDice(dicesSelectedPlayer, item, dicesTable, index) },
                         onLongClick = {
@@ -49,9 +56,19 @@ fun RowDices(
                             openDialog.value = true
                         }
                     ),
-                painter = painterResource(if (item.favor) item.imgFavor else item.img),
-            )
-
+                contentAlignment = Alignment.Center
+            ) {
+                if (item.favor)
+                    DashedStroke()
+                Image(
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(5.dp)),
+                    painter = painterResource(item.img),
+                )
+            }
         }
     }
 }

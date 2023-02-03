@@ -35,7 +35,7 @@ fun GodsList(testGods: List<God>, modifier: Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .height(IntrinsicSize.Max)
+                    .height(85.dp)
                     .padding(horizontal = 3.dp).clickable {
                         openDialog.value = true
                     },

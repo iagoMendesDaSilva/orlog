@@ -68,7 +68,7 @@ fun selectGods(
 
     listGods.forEach {
         viewModel.updateGodsList(
-            viewModel.getCurrentPlayer().value.gods,
+            viewModel.getCurrentPlayer().value.godFavors,
             true,
             it,
             viewModel

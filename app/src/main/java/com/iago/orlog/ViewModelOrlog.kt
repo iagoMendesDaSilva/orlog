@@ -15,25 +15,25 @@ import javax.inject.Inject
 class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     private val initialPlayer1 = Player(
-        hp = 15,
+        gems = 15,
         name = R.string.player1,
-        gods = mutableListOf(),
-        coinFace = COIN.UNDEFINED,
+        godFavors = mutableListOf(),
+        coinFace = Coin.UNDEFINED,
         tokens = 0,
         reroll = 3,
     )
 
     private val initialPlayer2 = Player(
-        hp = 15,
+        gems = 15,
         name = R.string.player2,
-        gods = mutableListOf(),
-        coinFace = COIN.UNDEFINED,
+        godFavors = mutableListOf(),
+        coinFace = Coin.UNDEFINED,
         tokens = 0,
         reroll = 3,
     )
 
-    var iaTurn = mutableStateOf(COIN.UNDEFINED)
-    var turn = mutableStateOf(COIN.UNDEFINED)
+    var iaTurn = mutableStateOf(Coin.UNDEFINED)
+    var turn = mutableStateOf(Coin.UNDEFINED)
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
     var player2 = mutableStateOf(initialPlayer2)
@@ -43,30 +43,30 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         val playerToChange = player ?: getCurrentPlayer()
 
         val newPlayer = playerToChange.value.copy(
-            hp = (if (property === "hp") value else playerToChange.value.hp) as Int,
+            gems = (if (property === "gems") value else playerToChange.value.gems) as Int,
             name = (if (property === "name") value else playerToChange.value.name) as Int,
             reroll = (if (property === "reroll") value else playerToChange.value.reroll) as Int,
-            gods = (if (property === "gods") value else playerToChange.value.gods) as MutableList<God>,
-            coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as COIN,
+            godFavors = (if (property === "godFavors") value else playerToChange.value.godFavors) as MutableList<God>,
+            coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as Coin,
         )
         playerToChange.value = newPlayer
     }
 
-    fun getImageCoinByTurn(coin: COIN? = null): Int {
+    fun getImageCoinByTurn(coin: Coin? = null): Int {
         val value = coin ?: turn.value
-        return if (value == COIN.UNDEFINED || value == COIN.FACE_UP) R.drawable.coin_face else R.drawable.coin_no_face
+        return if (value == Coin.UNDEFINED || value == Coin.FACE_UP) R.drawable.coin_face else R.drawable.coin_no_face
     }
 
     fun updateMode(newMode: MODES) {
         mode.value = newMode
     }
 
-    fun updateTurn(newTurn: COIN) {
+    fun updateTurn(newTurn: Coin) {
         turn.value = newTurn
     }
 
     fun changeTurn() {
-        turn.value = if (turn.value == COIN.FACE_UP) COIN.FACE_DOWN else COIN.FACE_UP
+        turn.value = if (turn.value == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
     }
 
     fun getCurrentPlayer(): MutableState<Player> {
@@ -86,7 +86,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         else
             list.remove(god)
 
-        viewModel.updatePlayer("gods", list)
+        viewModel.updatePlayer("godFavors", list)
     }
 
 

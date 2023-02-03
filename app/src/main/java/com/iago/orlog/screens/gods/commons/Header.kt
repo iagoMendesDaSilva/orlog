@@ -39,7 +39,7 @@ fun Header(
                 color = MaterialTheme.colors.secondary,
             )
         }
-        ButtonConfirmGods(player.value.gods.size === 3) {
+        ButtonConfirmGods(player.value.godFavors.size === 3) {
            onPress()
         }
     }
