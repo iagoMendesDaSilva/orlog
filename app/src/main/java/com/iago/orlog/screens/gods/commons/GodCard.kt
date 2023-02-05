@@ -27,6 +27,10 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
     val active = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
 
+    LaunchedEffect(key1 = player.value.name ){
+        active.value = false
+    }
+
     if (openDialog.value)
         GodInfo(god, openDialog)
 

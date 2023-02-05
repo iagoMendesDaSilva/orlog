@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.match.commons
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.iago.orlog.ViewModelOrlog
+import com.iago.orlog.screens.match.getRandomDiceSides
 import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.Player
 
@@ -21,6 +24,7 @@ fun RowDices(
     dicesTable: MutableState<MutableList<DiceSide>>,
     rotate: Boolean,
     player: MutableState<Player>,
+    viewModel: ViewModelOrlog,
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
@@ -30,7 +34,12 @@ fun RowDices(
         DiceInfo(openDialog, diceInfo, rotate)
 
     LaunchedEffect(key1 = player.value) {
-       selectDicesAutomatic(player, dicesTable, dicesSelectedPlayer)
+        selectDicesAutomatic(player, dicesTable, dicesSelectedPlayer)
+    }
+
+    LaunchedEffect(key1 = viewModel.turn.value) {
+        if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
+            dicesTable.value = getRandomDiceSides(dicesTable.value)
     }
 
     Row(
@@ -48,7 +57,10 @@ fun RowDices(
                     .padding(horizontal = 3.dp)
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
-                        onClick = { selectDice(dicesSelectedPlayer, item, dicesTable, index) },
+                        onClick = {
+                            if (player.value.coinFace === viewModel.turn.value)
+                                selectDice(dicesSelectedPlayer, item, dicesTable, index)
+                        },
                         onLongClick = {
                             diceInfo.value = item
                             openDialog.value = true
@@ -76,7 +88,7 @@ fun selectDicesAutomatic(
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>
 ) {
-    if (player.value.reroll == 0){
+    if (player.value.reroll == 0) {
         dicesTable.value.forEachIndexed { index, item ->
             selectDice(dicesSelectedPlayer, item, dicesTable, index)
         }

@@ -16,8 +16,6 @@ import com.iago.orlog.utils.Player
 @Composable
 fun HeaderStatus(
     player: MutableState<Player>,
-    dicesTablePlayer: MutableState<MutableList<DiceSide>>,
-    viewModel: ViewModelOrlog
 ) {
 
     Row(
@@ -29,10 +27,6 @@ fun HeaderStatus(
         Column() {
             TokensInfo(player.value.gems)
             GemsInfo(player.value.tokens)
-        }
-        Reroll(player, dicesTablePlayer.value) {
-            viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
-            dicesTablePlayer.value = getRandomDiceSides(dicesTablePlayer.value)
         }
 
     }

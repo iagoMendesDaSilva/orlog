@@ -39,10 +39,12 @@ fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 }
 
 fun pressConfirmButton(navController: NavHostController, viewModel: ViewModelOrlog) {
-        if (viewModel.turn.value === viewModel.player1.value.coinFace)
-            viewModel.changeTurn()
-        else
-            navController.navigate(Screens.MatchScreen.name)
+    if (viewModel.turn.value != viewModel.player1.value.coinFace) {
+        viewModel.changeTurn()
+        navController.navigate(Screens.MatchScreen.name)
+    } else
+        viewModel.changeTurn()
+
 }
 
 fun getGods(): MutableList<God> {
@@ -74,6 +76,6 @@ fun selectGods(
             viewModel
         )
     }
-    pressConfirmButton(navController,viewModel)
+    pressConfirmButton(navController, viewModel)
 }
 

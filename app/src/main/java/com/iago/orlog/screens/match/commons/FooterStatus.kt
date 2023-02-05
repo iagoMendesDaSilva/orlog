@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Player
-import com.iago.orlog.utils.gods
 
 @Composable
-fun FooterStatus(player: Player, rotate: Boolean) {
+fun FooterStatus(player: MutableState<Player>, rotate: Boolean, viewModel: ViewModelOrlog) {
     Row {
         Column(
             modifier = Modifier
@@ -19,11 +20,14 @@ fun FooterStatus(player: Player, rotate: Boolean) {
                 .weight(1f)
                 .padding(end = 10.dp, top = 10.dp)
         ) {
-            EndTurnButton(true,) {}
+            EndTurnButton(true,) {
+                viewModel.changeTurn()
+                viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
+            }
         }
         GodsList(
             rotate,
-            player.godFavors,
+            player.value.godFavors,
             Modifier
                 .fillMaxWidth()
                 .weight(1f)

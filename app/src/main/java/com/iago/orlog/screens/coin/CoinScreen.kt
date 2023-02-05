@@ -35,6 +35,13 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val rotation = remember { Animatable(currentRotation.value) }
 
+    LaunchedEffect(key1 = decision.value) {
+        if (decision.value != Coin.UNDEFINED && coinResult.value == Coin.UNDEFINED)
+            animation(rotation, currentRotation, coinResult, coroutineScope) {
+                decideTurns(decision.value, coinResult.value, viewModel, played)
+            }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,15 +50,10 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Header(decision.value, coinResult.value, played.value)
-        Coin(rotation, coinResult.value, viewModel, 125.dp) {
-            if (decision.value != Coin.UNDEFINED && coinResult.value == Coin.UNDEFINED)
-                animation(rotation, currentRotation, coinResult, coroutineScope) {
-                    decideTurns(decision.value, coinResult.value, viewModel, played)
-                }
-        }
+        Coin(rotation, coinResult.value, viewModel, 125.dp) {}
         if (played.value)
             ButtonChooseGodFavors(navController)
-         else
+        else
             ButtonsHeadNTail(decision)
     }
 }
@@ -110,12 +112,14 @@ fun ButtonsHeadNTail(decision: MutableState<Coin>) {
     Row() {
         ButtonCoin(
             text = R.string.head,
-            active = decision.value == Coin.FACE_UP
+            active = decision.value == Coin.FACE_UP,
+            enable = decision.value == Coin.UNDEFINED
         ) {
             decision.value = Coin.FACE_UP
         }
         ButtonCoin(
             text = R.string.tail,
+            enable = decision.value == Coin.UNDEFINED,
             active = decision.value == Coin.FACE_DOWN
         ) {
             decision.value = Coin.FACE_DOWN

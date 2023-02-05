@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ButtonCoin(text: Int, active: Boolean?, onPress: () -> Unit) {
+fun ButtonCoin(text: Int, active: Boolean?, enable: Boolean, onPress: () -> Unit) {
 
     val color =
         if (active == true) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
@@ -36,7 +36,10 @@ fun ButtonCoin(text: Int, active: Boolean?, onPress: () -> Unit) {
                 color = color,
             )
             .padding(vertical = 10.dp, horizontal = 20.dp)
-            .clickable { onPress() },
+            .clickable {
+                if (enable)
+                    onPress()
+            },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
