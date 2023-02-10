@@ -122,4 +122,24 @@
     <string name="roll_again">Roll again</string>
     <string name="roll_remaining">%1$d Remaining</string>
     <string name="end_turn">End Turn</string>
+    <string name="thor">Thor</string>
+    <string name="idun">Idun</string>
+    <string name="vidar">Vidar</string>
+    <string name="ullr">Ullr</string>
+    <string name="heimdall">Heimdall</string>
+    <string name="baldr">Baldr</string>
+    <string name="brunhild">Brunhild</string>
+    <string name="freyr">Freyr</string>
+    <string name="hel">Hel</string>
+    <string name="skadi">Skadi</string>
+    <string name="skuld">Skuld</string>
+    <string name="frigg">Frigg</string>
+    <string name="loki">Loki</string>
+    <string name="freyja">Freyja</string>
+    <string name="mimir">Mimir</string>
+    <string name="bragi">Bragi</string>
+    <string name="odin">Odin</string>
+    <string name="_var">Var</string>
+    <string name="thrymr">Thrymr</string>
+    <string name="tyr">Tyr</string>
 </resources>

@@ -24,7 +24,7 @@ fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val listState = rememberLazyStaggeredGridState()
 
     LaunchedEffect(key1 = viewModel.turn.value) {
-        if (viewModel.mode.value === MODES.ONE_PLAYER && viewModel.turn.value === viewModel.iaTurn.value)
+        if (viewModel.mode.value === MODES.ONE_PLAYER && viewModel.turn.value === viewModel.iaTurn.value && player.value.godFavors.isEmpty())
             selectGods(viewModel, navController)
     }
 
@@ -39,12 +39,9 @@ fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 }
 
 fun pressConfirmButton(navController: NavHostController, viewModel: ViewModelOrlog) {
-    if (viewModel.turn.value != viewModel.player1.value.coinFace) {
-        viewModel.changeTurn()
+    if (viewModel.turn.value === viewModel.player2.value.coinFace)
         navController.navigate(Screens.MatchScreen.name)
-    } else
-        viewModel.changeTurn()
-
+    viewModel.changeTurn()
 }
 
 fun getGods(): MutableList<God> {

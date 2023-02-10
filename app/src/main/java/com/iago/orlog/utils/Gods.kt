@@ -1,6 +1,9 @@
 package com.iago.orlog.utils
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.iago.orlog.R
+import com.iago.orlog.ViewModelOrlog
 
 data class Favor(
     val cost: Int,
@@ -9,6 +12,7 @@ data class Favor(
 )
 
 open class God(
+    val id: Int,
     val img: Int,
     val name: Int,
     val priority: Int,
@@ -23,6 +27,7 @@ open class God(
 
 val gods = listOf<God>(
     God(
+        id = R.string.thor,
         img = R.drawable.god_thor,
         priority = 6,
         name = R.string.god_thor,
@@ -35,6 +40,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_thor
     ),
     God(
+        id = R.string.idun,
         img = R.drawable.god_idun,
         priority = 7,
         name = R.string.god_idun,
@@ -47,6 +53,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_idun
     ),
     God(
+        id = R.string.vidar,
         img = R.drawable.god_vidar,
         priority = 4,
         name = R.string.god_vidar,
@@ -59,11 +66,12 @@ val gods = listOf<God>(
         description = R.string.desc_god_vidar
     ),
     God(
+        id = R.string.ullr,
         img = R.drawable.god_ullr,
         priority = 4,
         name = R.string.god_ullr,
         favors = listOf(
-            Favor(4, 2f, R.string.desc_favor_god_ullr),
+            Favor(2, 2f, R.string.desc_favor_god_ullr),
             Favor(3, 3f, R.string.desc_favor_god_ullr),
             Favor(4, 6f, R.string.desc_favor_god_ullr),
         ),
@@ -71,6 +79,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_ullr
     ),
     God(
+        id = R.string.heimdall,
         img = R.drawable.god_heimdall,
         priority = 4,
         name = R.string.god_heimdall,
@@ -83,6 +92,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_heimdall
     ),
     God(
+        id = R.string.baldr,
         img = R.drawable.god_baldr,
         priority = 4,
         name = R.string.god_baldr,
@@ -95,6 +105,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_baldr
     ),
     God(
+        id = R.string.brunhild,
         img = R.drawable.god_brunhild,
         priority = 4,
         name = R.string.god_brunhild,
@@ -107,6 +118,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_brunhild
     ),
     God(
+        id = R.string.freyr,
         img = R.drawable.god_freyr,
         priority = 4,
         name = R.string.god_freyr,
@@ -119,6 +131,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_freyr
     ),
     God(
+        id = R.string.hel,
         img = R.drawable.god_hel,
         priority = 4,
         name = R.string.god_hel,
@@ -131,6 +144,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_hel
     ),
     God(
+        id = R.string.skadi,
         img = R.drawable.god_skadi,
         priority = 4,
         name = R.string.god_skadi,
@@ -143,6 +157,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_skadi
     ),
     God(
+        id = R.string.skuld,
         img = R.drawable.god_skuld,
         priority = 3,
         name = R.string.god_skuld,
@@ -155,6 +170,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_skuld
     ),
     God(
+        id = R.string.frigg,
         img = R.drawable.god_frigg,
         priority = 2,
         name = R.string.god_frigg,
@@ -167,6 +183,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_frigg
     ),
     God(
+        id = R.string.loki,
         img = R.drawable.god_loki,
         priority = 2,
         name = R.string.god_loki,
@@ -179,6 +196,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_loki
     ),
     God(
+        id = R.string.freyja,
         img = R.drawable.god_freyja,
         priority = 2,
         name = R.string.god_freyja,
@@ -191,6 +209,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_freyja,
     ),
     God(
+        id = R.string.mimir,
         img = R.drawable.god_mimir,
         priority = 4,
         name = R.string.god_mimir,
@@ -203,6 +222,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_mimir
     ),
     God(
+        id = R.string.bragi,
         img = R.drawable.god_bragi,
         priority = 4,
         name = R.string.god_bragi,
@@ -215,6 +235,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_bragi
     ),
     God(
+        id = R.string.odin,
         img = R.drawable.god_odin,
         priority = 7,
         name = R.string.god_odin,
@@ -227,6 +248,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_odin
     ),
     God(
+        id = R.string._var,
         img = R.drawable.god_var,
         priority = 1,
         name = R.string.god_var,
@@ -239,6 +261,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_var,
     ),
     God(
+        id = R.string.thrymr,
         img = R.drawable.god_thrymr,
         priority = 1,
         name = R.string.god_thrymr,
@@ -251,6 +274,7 @@ val gods = listOf<God>(
         description = R.string.desc_god_thrymr,
     ),
     God(
+        id = R.string.tyr,
         img = R.drawable.god_tyr,
         priority = 3,
         name = R.string.god_tyr,
@@ -263,3 +287,204 @@ val gods = listOf<God>(
         description = R.string.desc_god_tyr
     )
 )
+
+class GodFavors {
+    companion object {
+        fun useThorFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+            viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+
+        fun useThrymrFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useVarFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useOdinFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useBragiFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useMimirFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useFreyjaFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useLokiFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useFriggFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useSkuldFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useSkadiFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useHelFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useFreyrFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useBrunhildFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useBaldrFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useHeimdallFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useUllrFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useVidarFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+            //
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+
+        fun useIdunFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+            viewModel.updatePlayer("gems", player.value.gems + favor.effect, player)
+        }
+
+        fun useTyrFavor(
+            viewModel: ViewModelOrlog,
+            player: MutableState<Player>,
+            opponent: MutableState<Player>,
+            favor: Favor
+        ) {
+             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+        }
+    }
+}

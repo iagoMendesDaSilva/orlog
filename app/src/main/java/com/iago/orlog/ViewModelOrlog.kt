@@ -32,11 +32,13 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         reroll = 3,
     )
 
+    var round = mutableStateOf(1)
     var iaTurn = mutableStateOf(Coin.UNDEFINED)
     var turn = mutableStateOf(Coin.UNDEFINED)
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
     var player2 = mutableStateOf(initialPlayer2)
+    var phase = mutableStateOf(Phase.ROLL_PHASE)
 
 
     fun updatePlayer(property: String, value: Any, player: MutableState<Player>? = null) {
@@ -71,6 +73,10 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     fun getCurrentPlayer(): MutableState<Player> {
         return if (turn.value === player1.value.coinFace) player1 else player2
+    }
+
+    fun getOpponent(player: Player): MutableState<Player> {
+        return if (player.coinFace === player1.value.coinFace) player2 else player1
     }
 
     fun updateGodsList(

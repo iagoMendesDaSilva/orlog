@@ -8,6 +8,12 @@ enum class Coin {
     UNDEFINED,
 }
 
+enum class Phase {
+    ROLL_PHASE,
+    GOD_FAVOR_PHASE,
+    RESOLUTION_PHASE,
+}
+
 data class Player(
     val gems: Int,
     val name: Int,
@@ -43,6 +49,8 @@ data class Dice(
 class Match(
     var mode: MODES,
     var turn: Coin,
+    var round: Int,
+    val phase: Phase,
     var player1: Player,
     val player2: Player,
 ) {}

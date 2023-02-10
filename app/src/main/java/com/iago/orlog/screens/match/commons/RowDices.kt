@@ -15,7 +15,11 @@ import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.match.getRandomDiceSides
 import com.iago.orlog.utils.DiceSide
+import com.iago.orlog.utils.MODES
 import com.iago.orlog.utils.Player
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -25,6 +29,7 @@ fun RowDices(
     rotate: Boolean,
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
+    onPressEndTurn: () -> Unit,
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
@@ -34,12 +39,15 @@ fun RowDices(
         DiceInfo(openDialog, diceInfo, rotate)
 
     LaunchedEffect(key1 = player.value) {
-        selectDicesAutomatic(player, dicesTable, dicesSelectedPlayer)
+        selectRemainingDices(player, dicesTable, dicesSelectedPlayer)
     }
 
     LaunchedEffect(key1 = viewModel.turn.value) {
         if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
             dicesTable.value = getRandomDiceSides(dicesTable.value)
+
+        if (viewModel.iaTurn.value === viewModel.turn.value && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value && player.value.reroll > 0)
+            selectDicesAutomatic(dicesTable, dicesSelectedPlayer, onPressEndTurn)
     }
 
     Row(
@@ -84,16 +92,29 @@ fun RowDices(
 }
 
 fun selectDicesAutomatic(
+    dicesTable: MutableState<MutableList<DiceSide>>,
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
+    onPressEndTurn: () -> Unit
+) {
+    var randomSize = (1 until dicesTable.value.size).random()
+    val randomItems = dicesTable.value.shuffled().take(randomSize)
+    randomItems.forEachIndexed { index, diceSide ->
+        selectDice(dicesSelectedPlayer, diceSide, dicesTable, index)
+    }
+    onPressEndTurn()
+}
+
+fun selectRemainingDices(
     player: MutableState<Player>,
     dicesTable: MutableState<MutableList<DiceSide>>,
-    dicesSelectedPlayer: MutableState<List<DiceSide>>
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
 ) {
-    if (player.value.reroll == 0) {
-        dicesTable.value.forEachIndexed { index, item ->
-            selectDice(dicesSelectedPlayer, item, dicesTable, index)
+        if (player.value.reroll == 0) {
+            dicesTable.value.forEachIndexed { index, item ->
+                selectDice(dicesSelectedPlayer, item, dicesTable, index)
+            }
+            dicesTable.value = mutableListOf()
         }
-        dicesTable.value = mutableListOf()
-    }
 }
 
 fun selectDice(

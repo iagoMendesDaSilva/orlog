@@ -1,29 +1,31 @@
 package com.iago.orlog.screens.match
 
+import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
-import com.iago.orlog.utils.DiceSide
-import com.iago.orlog.utils.MODES
-import com.iago.orlog.utils.Player
-import com.iago.orlog.utils.dices
+import com.iago.orlog.utils.*
+import kotlinx.coroutines.delay
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.functions
 
 @Composable
 fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val rotate =
         viewModel.mode.value === MODES.ONE_PLAYER && viewModel.iaTurn.value == viewModel.player1.value.coinFace
+
+    var dialogPhaseVisible = remember { mutableStateOf(false) }
 
     val dicesTablePlayer1 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
     val dicesTablePlayer2 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
@@ -33,6 +35,12 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
+
+    if (dicesTablePlayer1.value.isEmpty() && dicesTablePlayer2.value.isEmpty())
+        viewModel.phase.value =
+            if (viewModel.round.value === 1) Phase.RESOLUTION_PHASE
+            else Phase.GOD_FAVOR_PHASE
+
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
@@ -73,6 +81,8 @@ fun PlayerTable(
     dicesTablePlayer: MutableState<MutableList<DiceSide>>
 ) {
 
+    val context = LocalContext.current
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.End,
@@ -83,11 +93,29 @@ fun PlayerTable(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate, player, viewModel)
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate, player, viewModel) {
+                endTurn(viewModel, player)
+            }
             RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player, rotate, viewModel)
+            FooterStatus(player, rotate, viewModel,
+                onPressEndTurn = { endTurn(viewModel, player) },
+                pressGodFavor = { godFavor, favor ->
+                    useGodFavor(
+                        context,
+                        godFavor,
+                        favor,
+                        viewModel,
+                        player,
+                        viewModel.getOpponent(player.value)
+                    )
+                })
         }
     }
+}
+
+fun endTurn(viewModel: ViewModelOrlog, player: MutableState<Player>) {
+    viewModel.changeTurn()
+    viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
 }
 
 fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<DiceSide> {
@@ -104,4 +132,21 @@ fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<Di
     }
 
     return dices
+}
+
+fun useGodFavor(
+    context: Context,
+    godFavor: God,
+    favor: Favor,
+    viewModel: ViewModelOrlog,
+    player: MutableState<Player>,
+    opponent: MutableState<Player>
+) {
+    val godFavorID = context.getString(godFavor.id)
+    val companionObject = GodFavors::class.companionObject
+    if (companionObject != null) {
+        val companionInstance = GodFavors::class.companionObjectInstance
+        val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
+        functionEx.call(companionInstance, viewModel, player, opponent, favor)
+    }
 }

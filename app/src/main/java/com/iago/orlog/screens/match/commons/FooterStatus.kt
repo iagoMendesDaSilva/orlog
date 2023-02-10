@@ -9,10 +9,18 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
+import com.iago.orlog.utils.Favor
+import com.iago.orlog.utils.God
 import com.iago.orlog.utils.Player
 
 @Composable
-fun FooterStatus(player: MutableState<Player>, rotate: Boolean, viewModel: ViewModelOrlog) {
+fun FooterStatus(
+    player: MutableState<Player>,
+    rotate: Boolean,
+    viewModel: ViewModelOrlog,
+    onPressEndTurn: ()->Unit,
+    pressGodFavor: (god: God, favor: Favor) -> Unit
+) {
     Row {
         Column(
             modifier = Modifier
@@ -20,18 +28,19 @@ fun FooterStatus(player: MutableState<Player>, rotate: Boolean, viewModel: ViewM
                 .weight(1f)
                 .padding(end = 10.dp, top = 10.dp)
         ) {
-            EndTurnButton(true,) {
-                viewModel.changeTurn()
-                viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
+            EndTurnButton(true) {
+               onPressEndTurn()
             }
         }
         GodsList(
+            viewModel,
             rotate,
             player.value.godFavors,
             Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(vertical = 5.dp),
+            pressGodFavor,
         )
     }
 }
