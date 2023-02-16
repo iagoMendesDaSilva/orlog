@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,7 @@ fun GodsList(
     pressGodFavor: (god: God, favor: Favor) -> Unit
 ) {
 
-    val enable = viewModel.phase.value === Phase.GOD_FAVOR_PHASE
+    val enable = viewModel.phase.value == Phase.GOD_FAVOR_PHASE
 
     Row(
         modifier = modifier,
@@ -49,7 +48,6 @@ fun GodsList(
                     .weight(1f)
                     .height(85.dp)
                     .padding(horizontal = 3.dp)
-                    .alpha(if (enable) 1f else .5f)
                     .clickable {
                         if (enable)
                             openDialog.value = true

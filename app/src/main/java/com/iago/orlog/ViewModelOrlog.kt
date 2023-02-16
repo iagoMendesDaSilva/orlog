@@ -38,7 +38,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
     var player2 = mutableStateOf(initialPlayer2)
-    var phase = mutableStateOf(Phase.ROLL_PHASE)
+    var phase = mutableStateOf(Phase.UNDEFINED)
 
 
     fun updatePlayer(property: String, value: Any, player: MutableState<Player>? = null) {
@@ -50,6 +50,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
             reroll = (if (property === "reroll") value else playerToChange.value.reroll) as Int,
             godFavors = (if (property === "godFavors") value else playerToChange.value.godFavors) as MutableList<God>,
             coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as Coin,
+            tokens = (if (property === "tokens") value else playerToChange.value.tokens) as Int,
         )
         playerToChange.value = newPlayer
     }

@@ -14,7 +14,6 @@ import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
 import com.iago.orlog.utils.*
-import kotlinx.coroutines.delay
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
@@ -27,8 +26,8 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     var dialogPhaseVisible = remember { mutableStateOf(false) }
 
-    val dicesTablePlayer1 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
-    val dicesTablePlayer2 = remember { mutableStateOf<MutableList<DiceSide>>(getRandomDiceSides()) }
+    val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
+    val dicesTablePlayer2 = remember { mutableStateOf(getRandomDiceSides()) }
 
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
     val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
@@ -37,9 +36,11 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val rotation = remember { Animatable(currentRotation.value) }
 
     if (dicesTablePlayer1.value.isEmpty() && dicesTablePlayer2.value.isEmpty())
-        viewModel.phase.value =
-            if (viewModel.round.value === 1) Phase.RESOLUTION_PHASE
-            else Phase.GOD_FAVOR_PHASE
+        dialogPhaseVisible.value = true
+
+    LaunchedEffect(key1 = viewModel.phase.value) {
+        verifyResolutionPhase(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
+    }
 
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -69,7 +70,32 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
                 .weight(1f), viewModel, viewModel.player1, dicesSelectedPlayer1, dicesTablePlayer1
         )
     }
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
+    }
+
+    PhaseDialog(dialogPhaseVisible, dicesTablePlayer1, dicesTablePlayer2, viewModel)
+
+
 }
+
+fun verifyResolutionPhase(
+    viewModel: ViewModelOrlog,
+    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+) {
+    if (viewModel.phase.value === Phase.RESOLUTION_PHASE) {
+        getTokens(dicesSelectedPlayer1, viewModel.player1, viewModel)
+        getTokens(dicesSelectedPlayer2, viewModel.player2, viewModel)
+    }
+}
+
+fun getTokens(dicesSelectedPlayer: MutableState<List<DiceSide>>, player: MutableState<Player>, viewModel: ViewModelOrlog) {
+    val tokensPlayer= dicesSelectedPlayer.value.count { it.favor }
+    viewModel.updatePlayer("tokens", tokensPlayer, player)
+}
+
 
 @Composable
 fun PlayerTable(

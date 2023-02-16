@@ -25,8 +25,8 @@ fun HeaderStatus(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column() {
-            TokensInfo(player.value.gems)
-            GemsInfo(player.value.tokens)
+            TokensInfo(player.value.tokens)
+            GemsInfo(player.value.gems)
         }
 
     }

@@ -16,6 +16,7 @@ import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.match.getRandomDiceSides
 import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.MODES
+import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -66,7 +67,7 @@ fun RowDices(
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
                         onClick = {
-                            if (player.value.coinFace === viewModel.turn.value)
+                            if (player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
                                 selectDice(dicesSelectedPlayer, item, dicesTable, index)
                         },
                         onLongClick = {

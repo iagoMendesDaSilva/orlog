@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Favor
 import com.iago.orlog.utils.God
+import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
 
 @Composable
@@ -29,7 +30,8 @@ fun FooterStatus(
                 .padding(end = 10.dp, top = 10.dp)
         ) {
             EndTurnButton(true) {
-               onPressEndTurn()
+              if(viewModel.phase.value === Phase.ROLL_PHASE)
+                  onPressEndTurn()
             }
         }
         GodsList(
