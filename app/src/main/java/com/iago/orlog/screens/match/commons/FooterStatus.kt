@@ -30,7 +30,7 @@ fun FooterStatus(
                 .padding(end = 10.dp, top = 10.dp)
         ) {
             EndTurnButton(true) {
-              if(viewModel.phase.value === Phase.ROLL_PHASE)
+              if(viewModel.phase.value === Phase.ROLL_PHASE && viewModel.turn.value === player.value.coinFace)
                   onPressEndTurn()
             }
         }

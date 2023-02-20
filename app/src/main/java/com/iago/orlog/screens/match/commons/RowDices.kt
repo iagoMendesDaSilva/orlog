@@ -1,6 +1,7 @@
+@file:Suppress("DEPRECATED_IDENTITY_EQUALS")
+
 package com.iago.orlog.screens.match.commons
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,7 +19,6 @@ import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.MODES
 import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,6 +44,9 @@ fun RowDices(
     }
 
     LaunchedEffect(key1 = viewModel.turn.value) {
+        if (dicesTable.value.isEmpty() && viewModel.turn.value === player.value.coinFace)
+            onPressEndTurn()
+
         if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
             dicesTable.value = getRandomDiceSides(dicesTable.value)
 
@@ -97,7 +100,8 @@ fun selectDicesAutomatic(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     onPressEndTurn: () -> Unit
 ) {
-    var randomSize = (1 until dicesTable.value.size).random()
+    var randomSize = (0 until dicesTable.value.size).random()
+    if (randomSize === 0) randomSize = 1
     val randomItems = dicesTable.value.shuffled().take(randomSize)
     randomItems.forEachIndexed { index, diceSide ->
         selectDice(dicesSelectedPlayer, diceSide, dicesTable, index)
@@ -110,12 +114,12 @@ fun selectRemainingDices(
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
 ) {
-        if (player.value.reroll == 0) {
-            dicesTable.value.forEachIndexed { index, item ->
-                selectDice(dicesSelectedPlayer, item, dicesTable, index)
-            }
-            dicesTable.value = mutableListOf()
+    if (player.value.reroll == 0) {
+        dicesTable.value.forEachIndexed { index, item ->
+            selectDice(dicesSelectedPlayer, item, dicesTable, index)
         }
+        dicesTable.value = mutableListOf()
+    }
 }
 
 fun selectDice(
