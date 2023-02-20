@@ -98,8 +98,8 @@ fun verifyResolutionPhase(
     dicesSelectedPlayer2: MutableState<List<DiceSide>>
 ) {
     if (viewModel.phase.value === Phase.RESOLUTION_PHASE) {
-        getTokens(dicesSelectedPlayer1, viewModel.player1, viewModel)
-        getTokens(dicesSelectedPlayer2, viewModel.player2, viewModel)
+        getTokens(dicesSelectedPlayer1, viewModel.player1,viewModel.player2, viewModel)
+        getTokens(dicesSelectedPlayer2, viewModel.player2,viewModel.player1, viewModel)
         attackOpponent(
             dicesSelectedPlayer1,
             dicesSelectedPlayer2,
@@ -193,10 +193,14 @@ fun getFinalDamage(
 fun getTokens(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     player: MutableState<Player>,
+    opponent: MutableState<Player>,
     viewModel: ViewModelOrlog
 ) {
-    val tokensPlayer = dicesSelectedPlayer.value.count { it.favor }
-    viewModel.updatePlayer("tokens", tokensPlayer, player)
+    val getTokens = dicesSelectedPlayer.value.count { it.favor }
+    val stealTokens = dicesSelectedPlayer.value.count { it.side === DiceFace.HAND }
+    val totalTokens = player.value.tokens + getTokens + stealTokens
+    viewModel.updatePlayer("tokens", totalTokens, player)
+    viewModel.updatePlayer("tokens", (opponent.value.tokens - stealTokens).coerceAtLeast(0), opponent)
 }
 
 
