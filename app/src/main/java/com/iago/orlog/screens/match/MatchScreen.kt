@@ -1,6 +1,7 @@
 package com.iago.orlog.screens.match
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -14,6 +15,7 @@ import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
 import com.iago.orlog.utils.*
+import java.util.*
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
@@ -38,7 +40,13 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     verifyPhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
 
     LaunchedEffect(key1 = viewModel.phase.value) {
-        verifyResolutionPhase(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
+        if(viewModel.phase.value == Phase.RESOLUTION_PHASE)
+            verifyResolutionPhase(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
+    }
+
+    LaunchedEffect(key1 = viewModel.phase.value) {
+        if(viewModel.phase.value == Phase.ROLL_PHASE)
+            verifyRollPhase( dicesSelectedPlayer1, dicesSelectedPlayer2, dicesTablePlayer1, dicesTablePlayer2)
     }
 
 
@@ -78,6 +86,18 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
 }
 
+fun verifyRollPhase(
+    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>,
+    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
+    dicesTablePlayer2: MutableState<MutableList<DiceSide>>
+) {
+        dicesSelectedPlayer1.value = emptyList()
+        dicesSelectedPlayer2.value = emptyList()
+        dicesTablePlayer1.value = getRandomDiceSides()
+        dicesTablePlayer2.value = getRandomDiceSides()
+}
+
 fun verifyPhase(
     dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
     dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
@@ -88,7 +108,7 @@ fun verifyPhase(
             if (viewModel.round.value === 1) Phase.RESOLUTION_PHASE
             else Phase.GOD_FAVOR_PHASE
         else
-            Phase.ROLL_PHASE
+          Phase.ROLL_PHASE
 
 }
 
@@ -97,9 +117,8 @@ fun verifyResolutionPhase(
     dicesSelectedPlayer1: MutableState<List<DiceSide>>,
     dicesSelectedPlayer2: MutableState<List<DiceSide>>
 ) {
-    if (viewModel.phase.value === Phase.RESOLUTION_PHASE) {
-        getTokens(dicesSelectedPlayer1, viewModel.player1,viewModel.player2, viewModel)
-        getTokens(dicesSelectedPlayer2, viewModel.player2,viewModel.player1, viewModel)
+        getTokens(dicesSelectedPlayer1, viewModel.player1, viewModel.player2, viewModel)
+        getTokens(dicesSelectedPlayer2, viewModel.player2, viewModel.player1, viewModel)
         attackOpponent(
             dicesSelectedPlayer1,
             dicesSelectedPlayer2,
@@ -107,8 +126,18 @@ fun verifyResolutionPhase(
             viewModel.player2,
             viewModel
         )
-    }
+        verifyEndGame(viewModel.player1, viewModel.player2, viewModel)
+
 }
+
+fun verifyEndGame(player1: MutableState<Player>, player2: MutableState<Player>, viewModel: ViewModelOrlog) {
+    if (player1.value.gems <= 0 || player2.value.gems <= 0)
+        Log.d("TAG", "ENDGAME")
+    else{
+        viewModel.updatePlayer("reroll", 3, player1)
+        viewModel.updatePlayer("reroll", 3, player2)
+        viewModel.phase.value = Phase.ROLL_PHASE
+}}
 
 fun attackOpponent(
     dicesSelectedPlayer1: MutableState<List<DiceSide>>,
@@ -117,31 +146,16 @@ fun attackOpponent(
     player2: MutableState<Player>,
     viewModel: ViewModelOrlog
 ) {
-    val player1Defenses =
-        dicesSelectedPlayer1.value.filter { it.side in setOf(DiceFace.SHIELD, DiceFace.HELMET) }
-    val player2Defenses =
-        dicesSelectedPlayer2.value.filter { it.side in setOf(DiceFace.SHIELD, DiceFace.HELMET) }
-    val player1Attacks = dicesSelectedPlayer1.value.filter {
-        it.side in setOf(
-            DiceFace.AXE,
-            DiceFace.AXE2,
-            DiceFace.ARROW
-        )
-    }
-    val player2Attacks = dicesSelectedPlayer2.value.filter {
-        it.side in setOf(
-            DiceFace.AXE,
-            DiceFace.AXE2,
-            DiceFace.ARROW
-        )
-    }
+    val player1Attacks = dicesSelectedPlayer1.value.filter { it.side in diceFacesAttacks }
+    val player2Attacks = dicesSelectedPlayer2.value.filter { it.side in diceFacesAttacks }
+    val player1Defenses = dicesSelectedPlayer1.value.filter { it.side in diceFacesDefenses }
+    val player2Defenses = dicesSelectedPlayer2.value.filter { it.side in diceFacesDefenses }
 
     val player1Damage = getFinalDamage(player1Attacks, player2Defenses)
     val player2Damage = getFinalDamage(player2Attacks, player1Defenses)
 
-    viewModel.updatePlayer("gems", player1.value.gems - player2Damage, player1)
-    viewModel.updatePlayer("gems", player2.value.gems - player1Damage, player2)
-
+    viewModel.updatePlayer("gems", (player1.value.gems - player2Damage).coerceAtLeast(0), player1)
+    viewModel.updatePlayer("gems", (player2.value.gems - player1Damage).coerceAtLeast(0), player2)
 }
 
 fun getFinalDamage(
@@ -150,44 +164,31 @@ fun getFinalDamage(
 ): Int {
     var playerDamage = 0
     var opponentDefensesToUse = opponentDefenses.toMutableList()
-    for (attack in playerAttacks) {
-        when (attack.side) {
-            DiceFace.ARROW -> {
-                if (opponentDefensesToUse.any { it.side in setOf(DiceFace.SHIELD) }) {
-                    // attack is blocked
-                    val index = opponentDefensesToUse.indexOfFirst { it.side === DiceFace.SHIELD }
-                    opponentDefensesToUse.removeAt(index)
-                    continue
-                } else {
-                    // attack is successful
-                    playerDamage += 1
-                }
-            }
-            DiceFace.AXE -> {
-                if (opponentDefensesToUse.any { it.side == DiceFace.HELMET }) {
-                    // attack is blocked
-                    val index = opponentDefensesToUse.indexOfFirst { it.side === DiceFace.HELMET }
-                    opponentDefensesToUse.removeAt(index)
-                    continue
-                } else {
-                    // attack is successful
-                    playerDamage += 1
-                }
-            }
-            DiceFace.AXE2 -> {
-                if (opponentDefensesToUse.any { it.side == DiceFace.HELMET }) {
-                    // attack is blocked
-                    val index = opponentDefensesToUse.indexOfFirst { it.side === DiceFace.HELMET }
-                    opponentDefensesToUse.removeAt(index)
-                    continue
-                } else {
-                    // attack is successful
-                    playerDamage += 1
-                }
-            }
+
+    playerAttacks.forEach { diceSide ->
+        val defenseDiceSide =
+            if (diceSide.side === DiceFace.ARROW) DiceFace.SHIELD else DiceFace.HELMET
+        verifyAttack(opponentDefensesToUse, defenseDiceSide) { damage, defensesUpdated ->
+            if (damage)
+                playerDamage += 1
+            opponentDefensesToUse = defensesUpdated
         }
     }
     return playerDamage
+}
+
+fun verifyAttack(
+    opponentDefenses: MutableList<DiceSide>,
+    diceFace: DiceFace,
+    onAttack: (damage: Boolean, opponentDefenses: MutableList<DiceSide>) -> Unit
+) {
+    var damage = false
+    if (opponentDefenses.any { it.side == diceFace }) {
+        val index = opponentDefenses.indexOfFirst { it.side === diceFace }
+        opponentDefenses.removeAt(index)
+    } else
+        damage = true
+    onAttack(damage, opponentDefenses)
 }
 
 fun getTokens(
@@ -199,8 +200,13 @@ fun getTokens(
     val getTokens = dicesSelectedPlayer.value.count { it.favor }
     val stealTokens = dicesSelectedPlayer.value.count { it.side === DiceFace.HAND }
     val totalTokens = player.value.tokens + getTokens + stealTokens
+
     viewModel.updatePlayer("tokens", totalTokens, player)
-    viewModel.updatePlayer("tokens", (opponent.value.tokens - stealTokens).coerceAtLeast(0), opponent)
+    viewModel.updatePlayer(
+        "tokens",
+        (opponent.value.tokens - stealTokens).coerceAtLeast(0),
+        opponent
+    )
 }
 
 

@@ -56,6 +56,9 @@ class Match(
     val player2: Player,
 ) {}
 
+val diceFacesDefenses = setOf(DiceFace.HELMET,DiceFace.ARROW)
+val diceFacesAttacks = setOf(DiceFace.ARROW,DiceFace.AXE,DiceFace.AXE2)
+
 val diceSides = listOf<DiceSide>(
     DiceSide(
         name = R.string.shield,

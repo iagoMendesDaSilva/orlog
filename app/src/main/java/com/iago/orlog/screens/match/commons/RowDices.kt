@@ -44,14 +44,15 @@ fun RowDices(
     }
 
     LaunchedEffect(key1 = viewModel.turn.value) {
-        if (dicesTable.value.isEmpty() && viewModel.turn.value === player.value.coinFace)
-            onPressEndTurn()
-
         if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
             dicesTable.value = getRandomDiceSides(dicesTable.value)
 
-        if (viewModel.iaTurn.value === viewModel.turn.value && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value && player.value.reroll > 0)
-            selectDicesAutomatic(dicesTable, dicesSelectedPlayer, onPressEndTurn)
+        if (viewModel.iaTurn.value === viewModel.turn.value && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value) {
+            if (player.value.reroll > 0)
+                selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
+            onPressEndTurn()
+        }
+
     }
 
     Row(
@@ -98,7 +99,6 @@ fun RowDices(
 fun selectDicesAutomatic(
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    onPressEndTurn: () -> Unit
 ) {
     var randomSize = (0 until dicesTable.value.size).random()
     if (randomSize === 0) randomSize = 1
@@ -106,7 +106,6 @@ fun selectDicesAutomatic(
     randomItems.forEachIndexed { index, diceSide ->
         selectDice(dicesSelectedPlayer, diceSide, dicesTable, index)
     }
-    onPressEndTurn()
 }
 
 fun selectRemainingDices(
