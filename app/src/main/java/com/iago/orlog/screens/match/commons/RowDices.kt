@@ -48,7 +48,7 @@ fun RowDices(
             dicesTable.value = getRandomDiceSides(dicesTable.value)
 
         if (viewModel.iaTurn.value === viewModel.turn.value && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value) {
-            if (player.value.reroll > 0)
+            if (player.value.reroll > 0 && dicesTable.value.isNotEmpty())
                 selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
             onPressEndTurn()
         }
@@ -103,7 +103,8 @@ fun selectDicesAutomatic(
     var randomSize = (0 until dicesTable.value.size).random()
     if (randomSize === 0) randomSize = 1
     val randomItems = dicesTable.value.shuffled().take(randomSize)
-    randomItems.forEachIndexed { index, diceSide ->
+    randomItems.forEachIndexed { _, diceSide ->
+        val index = dicesTable.value.indexOf(diceSide)
         selectDice(dicesSelectedPlayer, diceSide, dicesTable, index)
     }
 }
