@@ -5,15 +5,9 @@ import androidx.compose.runtime.MutableState
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
 
-enum class GodFavorStatus{
-    NO_PLAYER,
-    ONE_PLAYER,
-    TWO_PLAYERS
-}
-
 data class FavorResolution(
-    val favor: Favor,
-    val godId: Int,
+    val favor: Favor?,
+    val godId: Int?,
 )
 
 data class Favor(

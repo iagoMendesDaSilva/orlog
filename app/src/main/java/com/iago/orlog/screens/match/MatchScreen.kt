@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
@@ -18,6 +19,7 @@ import com.iago.orlog.utils.*
 @Composable
 fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
+    val context = LocalContext.current
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
 
@@ -26,6 +28,24 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val dicesTablePlayer2 = remember { mutableStateOf(getRandomDiceSides()) }
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
     val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
+
+    LaunchedEffect(key1 = viewModel.phase.value, block = {
+        dialogPhaseShowing.value = true
+    })
+
+    LaunchedEffect(key1 = dialogPhaseShowing.value, block = {
+        if (!dialogPhaseShowing.value && viewModel.phase.value === Phase.RESOLUTION_PHASE)
+            verifyResolutionPhase(
+                context,
+                viewModel,
+                dicesTablePlayer1,
+                dicesTablePlayer2,
+                dicesSelectedPlayer1,
+                dicesSelectedPlayer2,
+            )
+    })
+
+    verifyPhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
@@ -67,27 +87,44 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     }
 
     PhaseDialog(dialogPhaseShowing, viewModel)
-
 }
 
-fun verifyGodFavorPhase(
+
+@Composable
+fun PlayerTable(
+    modifier: Modifier,
     viewModel: ViewModelOrlog,
-    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
-    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+    player: MutableState<Player>,
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
+    dicesTablePlayer: MutableState<MutableList<DiceSide>>,
+    dialogPhaseShowing: Boolean
 ) {
-    Log.d("TAG", viewModel.phase.value.toString())
-}
-
-fun verifyRollPhase(
-    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
-    dicesSelectedPlayer2: MutableState<List<DiceSide>>,
-    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
-    dicesTablePlayer2: MutableState<MutableList<DiceSide>>
-) {
-    dicesSelectedPlayer1.value = emptyList()
-    dicesSelectedPlayer2.value = emptyList()
-    dicesTablePlayer1.value = getRandomDiceSides()
-    dicesTablePlayer2.value = getRandomDiceSides()
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        HeaderStatus(player)
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel, dialogPhaseShowing) {
+                endTurn(viewModel, player)
+            }
+            RowSelectedDices(dicesSelectedPlayer.value)
+            FooterStatus(player, viewModel, dialogPhaseShowing,
+                onPressEndTurn = { endTurn(viewModel, player) },
+                pressGodFavor = { godFavor, favor ->
+                    chooseGodFavor(
+                        godFavor,
+                        favor,
+                        viewModel,
+                        player,
+                    )
+                })
+        }
+    }
 }
 
 fun verifyPhase(
@@ -107,6 +144,8 @@ fun verifyPhase(
 fun verifyResolutionPhase(
     context: Context,
     viewModel: ViewModelOrlog,
+    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
+    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer1: MutableState<List<DiceSide>>,
     dicesSelectedPlayer2: MutableState<List<DiceSide>>
 ) {
@@ -129,9 +168,42 @@ fun verifyResolutionPhase(
     if (player2.value.favorResolution != null && !gods.first { it.id == player2.value.favorResolution!!.godId }.useBeforeResolution)
         useGodFavor(context, player2.value.favorResolution!!, viewModel, player2, player1)
 
+    verifyEndGame(
+        viewModel.player1,
+        viewModel.player2,
+        viewModel,
+        dicesTablePlayer1,
+        dicesTablePlayer2,
+        dicesSelectedPlayer1,
+        dicesSelectedPlayer2
+    )
 
-    verifyEndGame(viewModel.player1, viewModel.player2, viewModel)
+}
 
+fun verifyEndGame(
+    player1: MutableState<Player>,
+    player2: MutableState<Player>,
+    viewModel: ViewModelOrlog,
+    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
+    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
+    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+) {
+    viewModel.round.value = viewModel.round.value + 1
+
+    if (player1.value.gems <= 0 || player2.value.gems <= 0)
+        Log.d("TAG", "ENDGAME")
+    else {
+        restartRollPhase(
+            viewModel,
+            player1,
+            player2,
+            dicesTablePlayer1,
+            dicesTablePlayer2,
+            dicesSelectedPlayer1,
+            dicesSelectedPlayer2
+        )
+    }
 }
 
 fun resolution(
@@ -150,31 +222,22 @@ fun resolution(
     )
 }
 
-fun verifyEndGame(
-    player1: MutableState<Player>,
-    player2: MutableState<Player>,
+fun getTokens(
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
+    player: MutableState<Player>,
+    opponent: MutableState<Player>,
     viewModel: ViewModelOrlog
 ) {
-    viewModel.round.value = viewModel.round.value + 1
+    val getTokens = dicesSelectedPlayer.value.count { it.favor }
+    val stealTokens = dicesSelectedPlayer.value.count { it.side === DiceFace.HAND }
+    val totalTokens = player.value.tokens + getTokens + stealTokens
 
-    if (player1.value.gems <= 0 || player2.value.gems <= 0)
-        Log.d("TAG", "ENDGAME")
-    else {
-        restartRollPhase(viewModel, player1, player2)
-    }
-}
-
-fun restartRollPhase(
-    viewModel: ViewModelOrlog,
-    player1: MutableState<Player>,
-    player2: MutableState<Player>
-) {
-    viewModel.updatePlayer("reroll", 3, player1)
-    viewModel.updatePlayer("reroll", 3, player2)
-    viewModel.godFavorStatus.value = GodFavorStatus.NO_PLAYER
-    viewModel.updatePlayer("favorResolution", null, player1)
-    viewModel.updatePlayer("favorResolution", null, player2)
-    viewModel.phase.value = Phase.ROLL_PHASE
+    viewModel.updatePlayer("tokens", totalTokens, player)
+    viewModel.updatePlayer(
+        "tokens",
+        (opponent.value.tokens - stealTokens).coerceAtLeast(0),
+        opponent
+    )
 }
 
 fun attackOpponent(
@@ -194,6 +257,26 @@ fun attackOpponent(
 
     viewModel.updatePlayer("gems", (player1.value.gems - player2Damage).coerceAtLeast(0), player1)
     viewModel.updatePlayer("gems", (player2.value.gems - player1Damage).coerceAtLeast(0), player2)
+}
+
+fun restartRollPhase(
+    viewModel: ViewModelOrlog,
+    player1: MutableState<Player>,
+    player2: MutableState<Player>,
+    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
+    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
+    dicesSelectedPlayer1: MutableState<List<DiceSide>>,
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+) {
+    viewModel.updatePlayer("reroll", 3, player1)
+    viewModel.updatePlayer("reroll", 3, player2)
+    viewModel.updatePlayer("favorResolution", null, player1)
+    viewModel.updatePlayer("favorResolution", null, player2)
+    dicesSelectedPlayer1.value = emptyList()
+    dicesSelectedPlayer2.value = emptyList()
+    dicesTablePlayer1.value = getRandomDiceSides()
+    dicesTablePlayer2.value = getRandomDiceSides()
+    viewModel.phase.value = Phase.ROLL_PHASE
 }
 
 fun getFinalDamage(
@@ -229,75 +312,17 @@ fun verifyAttack(
     onAttack(damage, opponentDefenses)
 }
 
-fun getTokens(
-    dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    player: MutableState<Player>,
-    opponent: MutableState<Player>,
-    viewModel: ViewModelOrlog
-) {
-    val getTokens = dicesSelectedPlayer.value.count { it.favor }
-    val stealTokens = dicesSelectedPlayer.value.count { it.side === DiceFace.HAND }
-    val totalTokens = player.value.tokens + getTokens + stealTokens
-
-    viewModel.updatePlayer("tokens", totalTokens, player)
-    viewModel.updatePlayer(
-        "tokens",
-        (opponent.value.tokens - stealTokens).coerceAtLeast(0),
-        opponent
-    )
-}
-
-
-@Composable
-fun PlayerTable(
-    modifier: Modifier,
-    viewModel: ViewModelOrlog,
-    player: MutableState<Player>,
-    dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTablePlayer: MutableState<MutableList<DiceSide>>,
-    dialogPhaseShowing: Boolean
-) {
-
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        HeaderStatus(player)
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel, dialogPhaseShowing) {
-                endTurn(viewModel, player)
-            }
-            RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player, viewModel,dialogPhaseShowing,
-                onPressEndTurn = { endTurn(viewModel, player) },
-                pressGodFavor = { godFavor, favor ->
-                    chooseGodFavor(
-                        godFavor,
-                        favor,
-                        viewModel,
-                        player,
-                    )
-                })
-        }
-    }
-}
 
 fun endTurn(viewModel: ViewModelOrlog, player: MutableState<Player>) {
     viewModel.changeTurn()
-    if (viewModel.phase.value == Phase.ROLL_PHASE)
-        viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
-
-    if (viewModel.phase.value == Phase.GOD_FAVOR_PHASE) {
-        if (viewModel.godFavorStatus.value === GodFavorStatus.NO_PLAYER)
-            viewModel.godFavorStatus.value = GodFavorStatus.ONE_PLAYER
-        else viewModel.godFavorStatus.value = GodFavorStatus.TWO_PLAYERS
+    when (viewModel.phase.value) {
+        Phase.ROLL_PHASE -> viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
+        Phase.GOD_FAVOR_PHASE -> viewModel.updatePlayer(
+            "selectGodFavorOrPass",
+            FavorResolution(null, null),
+            player
+        )
     }
-
 }
 
 fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<DiceSide> {
@@ -333,7 +358,7 @@ fun useGodFavor(
     player: MutableState<Player>,
     opponent: MutableState<Player>
 ) {
-    Log.d("TAG", favor.favor.cost.toString())
+//    Log.d("TAG", favor.favor.cost.toString())
 //    val godFavorID = context.getString(favor.godId)
 //    val companionObject = GodFavors::class.companionObject
 //    if (companionObject != null) {

@@ -36,7 +36,6 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         reroll = 3,
     )
 
-    var godFavorStatus = mutableStateOf(GodFavorStatus.NO_PLAYER)
     var round = mutableStateOf(1)
     var turn = mutableStateOf(Coin.UNDEFINED)
     var mode = mutableStateOf(MODES.ONE_PLAYER)

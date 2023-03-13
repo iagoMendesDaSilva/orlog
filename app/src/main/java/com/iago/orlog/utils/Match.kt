@@ -12,7 +12,6 @@ enum class Phase {
     ROLL_PHASE,
     GOD_FAVOR_PHASE,
     RESOLUTION_PHASE,
-    UNDEFINED,
 }
 
 data class Player(
