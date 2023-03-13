@@ -19,7 +19,6 @@ import com.iago.orlog.navigation.Screens
 import com.iago.orlog.screens.coin.commons.ButtonCoin
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.utils.Coin
-import com.iago.orlog.utils.MODES
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -139,9 +138,7 @@ fun decideTurns(
     viewModel.updateTurn(coinResult)
     viewModel.updatePlayer("coinFace", player1Turn, viewModel.player1)
     viewModel.updatePlayer("coinFace", player2Turn, viewModel.player2)
-
-    if (viewModel.mode.value === MODES.ONE_PLAYER)
-        viewModel.iaTurn.value = getOppositeCoin(decision)
+    viewModel.updatePlayer("ia", true, if (decision != coinResult) viewModel.player1 else viewModel.player2)
 
     played.value = true
 }

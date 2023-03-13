@@ -26,7 +26,6 @@ import com.iago.orlog.utils.dices
 fun DiceInfo(
     openDialog: MutableState<Boolean>,
     diceSide: MutableState<DiceSide?>,
-    rotate: Boolean
 ) {
     Dialog(
         onDismissRequest = {
@@ -39,8 +38,7 @@ fun DiceInfo(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,
                     )
-                    .padding(20.dp)
-                    .rotate(if (rotate) 180f else 0f),
+                    .padding(20.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
 

@@ -15,6 +15,7 @@ import javax.inject.Inject
 class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     private val initialPlayer1 = Player(
+        ia = false,
         favorResolution=null,
         gems = 15,
         name = R.string.player1,
@@ -25,6 +26,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
     )
 
     private val initialPlayer2 = Player(
+        ia = false,
         favorResolution = null,
         gems = 15,
         name = R.string.player2,
@@ -36,7 +38,6 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     var godFavorStatus = mutableStateOf(GodFavorStatus.NO_PLAYER)
     var round = mutableStateOf(1)
-    var iaTurn = mutableStateOf(Coin.UNDEFINED)
     var turn = mutableStateOf(Coin.UNDEFINED)
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
@@ -55,6 +56,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
             godFavors = (if (property === "godFavors") value else playerToChange.value.godFavors) as MutableList<God>,
             coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as Coin,
             tokens = (if (property === "tokens") value else playerToChange.value.tokens) as Int,
+            ia = (if (property === "ia") value else playerToChange.value.ia) as Boolean,
         )
         playerToChange.value = newPlayer
     }

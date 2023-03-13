@@ -16,6 +16,7 @@ enum class Phase {
 }
 
 data class Player(
+    val ia: Boolean,
     val favorResolution: FavorResolution?,
     val gems: Int,
     val name: Int,
@@ -47,15 +48,6 @@ data class Dice(
     val sides: List<DiceSide>,
     val tokenSides: List<DiceFace>,
 )
-
-class Match(
-    var mode: MODES,
-    var turn: Coin,
-    var round: Int,
-    val phase: Phase,
-    var player1: Player,
-    val player2: Player,
-) {}
 
 val diceFacesDefenses = setOf(DiceFace.HELMET,DiceFace.ARROW)
 val diceFacesAttacks = setOf(DiceFace.ARROW,DiceFace.AXE,DiceFace.AXE2)

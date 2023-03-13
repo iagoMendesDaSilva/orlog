@@ -26,7 +26,6 @@ import com.iago.orlog.utils.God
 fun GodInfoMatch(
     god: God,
     openDialog: MutableState<Boolean>,
-    rotate: Boolean,
     chooseGodFavor: (godFavor: Favor) -> Unit
 ) {
     val godFavor = remember { mutableStateOf<Favor?>(null) }
@@ -37,7 +36,6 @@ fun GodInfoMatch(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .rotate(if(rotate)180f else 0f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,

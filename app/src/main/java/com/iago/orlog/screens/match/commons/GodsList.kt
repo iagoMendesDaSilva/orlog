@@ -19,7 +19,6 @@ import com.iago.orlog.utils.Phase
 @Composable
 fun GodsList(
     viewModel: ViewModelOrlog,
-    rotate: Boolean,
     godFavors: List<God>,
     modifier: Modifier,
     pressGodFavor: (god: God, favor: Favor) -> Unit
@@ -37,7 +36,7 @@ fun GodsList(
             val openDialog = remember { mutableStateOf(false) }
 
             if (openDialog.value)
-                GodInfoMatch(godFavor, openDialog, rotate) {
+                GodInfoMatch(godFavor, openDialog) {
                     pressGodFavor(godFavor, it)
                 }
             Image(

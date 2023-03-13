@@ -24,9 +24,6 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val context = LocalContext.current
 
-    val rotate =
-        viewModel.mode.value === MODES.ONE_PLAYER && viewModel.iaTurn.value == viewModel.player1.value.coinFace
-
 //    var dialogPhaseVisible = remember { mutableStateOf(false) }
 
     val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
@@ -81,21 +78,18 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(25.dp)
-            .rotate(if (rotate) 180f else 0f),
+            .padding(25.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PlayerTable(
-            !rotate,
             Modifier
                 .fillMaxHeight()
                 .weight(1f)
                 .rotate(180f), viewModel, viewModel.player2, dicesSelectedPlayer2, dicesTablePlayer2
         )
-        MatchDivision(viewModel, rotate, rotation, currentRotation)
+        MatchDivision(viewModel, rotation, currentRotation)
         PlayerTable(
-            rotate,
             Modifier
                 .fillMaxHeight()
                 .weight(1f), viewModel, viewModel.player1, dicesSelectedPlayer1, dicesTablePlayer1
@@ -290,7 +284,6 @@ fun getTokens(
 
 @Composable
 fun PlayerTable(
-    rotate: Boolean,
     modifier: Modifier,
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
@@ -310,11 +303,11 @@ fun PlayerTable(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, rotate, player, viewModel) {
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel) {
                 endTurn(viewModel, player)
             }
             RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player, rotate, viewModel,
+            FooterStatus(player, viewModel,
                 onPressEndTurn = { endTurn(viewModel, player) },
                 pressGodFavor = { godFavor, favor ->
                     chooseGodFavor(

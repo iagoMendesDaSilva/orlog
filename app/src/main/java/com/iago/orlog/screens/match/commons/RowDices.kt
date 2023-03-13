@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 fun RowDices(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     dicesTable: MutableState<MutableList<DiceSide>>,
-    rotate: Boolean,
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
     onPressEndTurn: () -> Unit,
@@ -37,7 +36,7 @@ fun RowDices(
     val diceInfo = remember { mutableStateOf<DiceSide?>(null) }
 
     if (openDialog.value && diceInfo.value != null)
-        DiceInfo(openDialog, diceInfo, rotate)
+        DiceInfo(openDialog, diceInfo)
 
     LaunchedEffect(key1 = player.value) {
         selectRemainingDices(player, dicesTable, dicesSelectedPlayer)
@@ -47,7 +46,7 @@ fun RowDices(
         if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
             dicesTable.value = getRandomDiceSides(dicesTable.value)
 
-        if (viewModel.iaTurn.value === viewModel.turn.value && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value) {
+        if (player.value.ia && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value) {
             if (player.value.reroll > 0 && dicesTable.value.isNotEmpty())
                 selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
             onPressEndTurn()

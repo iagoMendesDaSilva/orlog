@@ -24,7 +24,7 @@ fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val listState = rememberLazyStaggeredGridState()
 
     LaunchedEffect(key1 = viewModel.turn.value) {
-        if (viewModel.mode.value === MODES.ONE_PLAYER && viewModel.turn.value === viewModel.iaTurn.value && player.value.godFavors.isEmpty())
+        if (player.value.ia && viewModel.turn.value === player.value.coinFace && player.value.godFavors.isEmpty())
             selectGods(viewModel, navController)
     }
 

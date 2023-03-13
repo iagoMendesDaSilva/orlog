@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MatchDivision(
     viewModel: ViewModelOrlog,
-    rotate: Boolean,
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>
 ) {
@@ -31,7 +30,6 @@ fun MatchDivision(
     }
 
     Column(modifier = Modifier
-        .rotate(if (rotate) 180f else 0f)
         .padding(vertical = 20.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -45,9 +45,12 @@ fun Footer(
                 .padding(top = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            ModeButton(GameModes.onePlayer, mode)
-            ModeButton(GameModes.twoPlayer, mode)
-            ModeButton(GameModes.online, mode, true)
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                ModeButton(GameModes.onePlayer, mode)
+            }
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                ModeButton(GameModes.online, mode, true)
+            }
         }
     }
 }

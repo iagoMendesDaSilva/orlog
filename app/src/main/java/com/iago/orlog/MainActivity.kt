@@ -6,13 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.iago.orlog.navigation.Navigation
 import com.iago.orlog.ui.theme.OrlogTheme
-import com.iago.orlog.utils.Match
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

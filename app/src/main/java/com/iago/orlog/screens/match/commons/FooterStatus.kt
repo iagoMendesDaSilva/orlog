@@ -17,7 +17,6 @@ import com.iago.orlog.utils.Player
 @Composable
 fun FooterStatus(
     player: MutableState<Player>,
-    rotate: Boolean,
     viewModel: ViewModelOrlog,
     onPressEndTurn: ()->Unit,
     pressGodFavor: (god: God, favor: Favor) -> Unit
@@ -36,7 +35,6 @@ fun FooterStatus(
         }
         GodsList(
             viewModel,
-            rotate,
             player.value.godFavors,
             Modifier
                 .fillMaxWidth()

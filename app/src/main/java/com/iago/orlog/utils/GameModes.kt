@@ -7,9 +7,7 @@ import kotlinx.android.parcel.Parcelize
 object GameModes {
     val onePlayer =
         Mode(name = R.string.one_player, mode = MODES.ONE_PLAYER, icon = R.drawable.axe_single)
-    val twoPlayer =
-        Mode(name = R.string.two_player, mode = MODES.TWO_PLAYER, icon = R.drawable.axe_double)
-    val online = Mode(name = R.string.online, mode = MODES.ONLINE, icon = R.drawable.axe_online)
+    val online = Mode(name = R.string.online, mode = MODES.ONLINE, icon = R.drawable.axe_double)
 }
 
 @Parcelize
@@ -21,6 +19,5 @@ data class Mode(
 
 enum class MODES {
     ONE_PLAYER,
-    TWO_PLAYER,
     ONLINE,
 }

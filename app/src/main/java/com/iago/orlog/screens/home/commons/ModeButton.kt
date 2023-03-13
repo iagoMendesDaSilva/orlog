@@ -25,13 +25,12 @@ fun ModeButton(mode: Mode, modeSelected: MutableState<Mode>, disabled: Boolean =
 
     val selected = mode.mode === modeSelected.value.mode
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .alpha(if (disabled) 0.5f else 1f)
-                .width(100.dp)
                 .height(100.dp)
+                .fillMaxWidth(.9f)
                 .border(
                     width = 2.dp,
                     shape = MaterialTheme.shapes.medium,
@@ -65,5 +64,4 @@ fun ModeButton(mode: Mode, modeSelected: MutableState<Mode>, disabled: Boolean =
                 .alpha(if (disabled) 0.5f else 1f),
             color = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant,
         )
-    }
 }
