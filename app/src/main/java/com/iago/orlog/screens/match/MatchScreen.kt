@@ -8,68 +8,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
 import com.iago.orlog.utils.*
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.functions
 
 @Composable
 fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
-    val context = LocalContext.current
-
-//    var dialogPhaseVisible = remember { mutableStateOf(false) }
-
-    val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
-    val dicesTablePlayer2 = remember { mutableStateOf(getRandomDiceSides()) }
-
-    val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
-    val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
-
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
 
-    verifyPhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
-
-    LaunchedEffect(key1 = viewModel.godFavorStatus.value) {
-        if(viewModel.godFavorStatus.value == GodFavorStatus.NO_PLAYER)
-            verifyRollPhase(
-                dicesSelectedPlayer1,
-                dicesSelectedPlayer2,
-                dicesTablePlayer1,
-                dicesTablePlayer2
-            )
-
-        if (viewModel.godFavorStatus.value == GodFavorStatus.TWO_PLAYERS)
-            verifyResolutionPhase(context, viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
-    }
-
-    LaunchedEffect(key1 = viewModel.phase.value) {
-        if (viewModel.phase.value == Phase.GOD_FAVOR_PHASE)
-            verifyGodFavorPhase(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
-    }
-
-    LaunchedEffect(key1 = viewModel.phase.value) {
-        if (viewModel.phase.value == Phase.RESOLUTION_PHASE)
-            verifyResolutionPhase(context, viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
-    }
-
-    LaunchedEffect(key1 = viewModel.phase.value) {
-        if (viewModel.phase.value == Phase.ROLL_PHASE)
-            verifyRollPhase(
-                dicesSelectedPlayer1,
-                dicesSelectedPlayer2,
-                dicesTablePlayer1,
-                dicesTablePlayer2
-            )
-    }
-
+    var dialogPhaseShowing = remember { mutableStateOf(true) }
+    val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
+    val dicesTablePlayer2 = remember { mutableStateOf(getRandomDiceSides()) }
+    val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
+    val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
@@ -86,13 +42,23 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
             Modifier
                 .fillMaxHeight()
                 .weight(1f)
-                .rotate(180f), viewModel, viewModel.player2, dicesSelectedPlayer2, dicesTablePlayer2
+                .rotate(180f),
+            viewModel,
+            if (viewModel.player1.value.ia) viewModel.player1 else viewModel.player2,
+            dicesSelectedPlayer2,
+            dicesTablePlayer2,
+            dialogPhaseShowing.value,
         )
         MatchDivision(viewModel, rotation, currentRotation)
         PlayerTable(
             Modifier
                 .fillMaxHeight()
-                .weight(1f), viewModel, viewModel.player1, dicesSelectedPlayer1, dicesTablePlayer1
+                .weight(1f),
+            viewModel,
+            if (viewModel.player1.value.ia) viewModel.player2 else viewModel.player1,
+            dicesSelectedPlayer1,
+            dicesTablePlayer1,
+            dialogPhaseShowing.value
         )
     }
 
@@ -100,7 +66,7 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
     }
 
-//    PhaseDialog(dialogPhaseVisible, dicesTablePlayer1, dicesTablePlayer2, viewModel)
+    PhaseDialog(dialogPhaseShowing, viewModel)
 
 }
 
@@ -206,8 +172,8 @@ fun restartRollPhase(
     viewModel.updatePlayer("reroll", 3, player1)
     viewModel.updatePlayer("reroll", 3, player2)
     viewModel.godFavorStatus.value = GodFavorStatus.NO_PLAYER
-    viewModel.updatePlayer("favorResolution",null,player1)
-    viewModel.updatePlayer("favorResolution",null,player2)
+    viewModel.updatePlayer("favorResolution", null, player1)
+    viewModel.updatePlayer("favorResolution", null, player2)
     viewModel.phase.value = Phase.ROLL_PHASE
 }
 
@@ -288,10 +254,10 @@ fun PlayerTable(
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTablePlayer: MutableState<MutableList<DiceSide>>
+    dicesTablePlayer: MutableState<MutableList<DiceSide>>,
+    dialogPhaseShowing: Boolean
 ) {
 
-    val context = LocalContext.current
 
     Column(
         modifier = modifier,
@@ -303,11 +269,11 @@ fun PlayerTable(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel) {
+            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel, dialogPhaseShowing) {
                 endTurn(viewModel, player)
             }
             RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player, viewModel,
+            FooterStatus(player, viewModel,dialogPhaseShowing,
                 onPressEndTurn = { endTurn(viewModel, player) },
                 pressGodFavor = { godFavor, favor ->
                     chooseGodFavor(

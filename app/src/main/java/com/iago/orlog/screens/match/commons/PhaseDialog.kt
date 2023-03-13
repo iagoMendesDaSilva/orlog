@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
-import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.Phase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -24,22 +23,25 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PhaseDialog(
-    dialogPhaseVisible: MutableState<Boolean>,
-    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
-    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
+    dialogPhaseShowing: MutableState<Boolean>,
     viewModel: ViewModelOrlog
 ) {
 
     val coroutineScope = rememberCoroutineScope()
+    var dialogPhaseVisible = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = dialogPhaseVisible.value) {
-        showPhase(
-            coroutineScope,
-            dialogPhaseVisible,
-            dicesTablePlayer1,
-            dicesTablePlayer2,
-            viewModel
-        )
+    LaunchedEffect(key1 = dialogPhaseShowing.value) {
+        if(dialogPhaseShowing.value)
+            dialogPhaseVisible.value = true
+    }
+
+    LaunchedEffect(key1 = dialogPhaseVisible.value){
+        if(dialogPhaseVisible.value)
+            showPhase(
+                coroutineScope,
+                dialogPhaseVisible,
+                dialogPhaseShowing,
+            )
     }
 
     val alphaOpacity: Float by animateFloatAsState(
@@ -86,57 +88,31 @@ fun PhaseDialog(
             Text(
                 color = MaterialTheme.colors.primary,
                 style = MaterialTheme.typography.body2,
-                text = stringResource(
-                    getPhaseName(
-                        dicesTablePlayer1,
-                        dicesTablePlayer2,
-                        viewModel
-                    )
-                ),
+                text = stringResource(getPhaseName(viewModel)),
             )
         }
 
     }
 }
 
-fun getPhaseName(
-    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
-    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
-    viewModel: ViewModelOrlog
-): Int {
-
-    return if (dicesTablePlayer1.value.isEmpty() && dicesTablePlayer2.value.isEmpty())
-        if (viewModel.round.value === 1) R.string.resolution_phase
-        else R.string.god_favor_phase
-    else
-        R.string.roll_phase
+fun getPhaseName(viewModel: ViewModelOrlog): Int {
+    return when (viewModel.phase.value) {
+        Phase.GOD_FAVOR_PHASE -> R.string.god_favor_phase
+        Phase.RESOLUTION_PHASE -> R.string.resolution_phase
+        else -> R.string.roll_phase
+    }
 }
 
 fun showPhase(
     coroutineScope: CoroutineScope,
     dialogPhaseVisible: MutableState<Boolean>,
-    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
-    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
-    viewModel: ViewModelOrlog
+    dialogPhaseShowing: MutableState<Boolean>,
 ) {
     coroutineScope.launch {
-        dialogPhaseVisible.value = true
-        delay(500L)
-        dialogPhaseVisible.value = false
-        delay(1500L)
-        changePhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
+        dialogPhaseVisible.value = true //start animation
+        delay(2500L) //show and stay
+        dialogPhaseVisible.value = false //close animation
+        delay(1500L)// time close
+        dialogPhaseShowing.value = false// close modal
     }
-}
-
-fun changePhase(
-    dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
-    dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
-    viewModel: ViewModelOrlog
-) {
-    viewModel.phase.value =
-        if (dicesTablePlayer1.value.isNotEmpty() || dicesTablePlayer2.value.isNotEmpty())
-            Phase.ROLL_PHASE
-        else
-            if (viewModel.round.value === 1) Phase.RESOLUTION_PHASE
-            else Phase.GOD_FAVOR_PHASE
 }

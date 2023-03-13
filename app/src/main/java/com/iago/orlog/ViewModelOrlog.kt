@@ -42,7 +42,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
     var player2 = mutableStateOf(initialPlayer2)
-    var phase = mutableStateOf(Phase.UNDEFINED)
+    var phase = mutableStateOf(Phase.ROLL_PHASE)
 
 
     fun updatePlayer(property: String, value: Any?, player: MutableState<Player>? = null) {

@@ -2,6 +2,7 @@
 
 package com.iago.orlog.screens.match.commons
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.match.getRandomDiceSides
 import com.iago.orlog.utils.DiceSide
-import com.iago.orlog.utils.MODES
 import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -29,6 +27,7 @@ fun RowDices(
     dicesTable: MutableState<MutableList<DiceSide>>,
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
+    dialogPhaseShowing: Boolean,
     onPressEndTurn: () -> Unit,
 ) {
 
@@ -38,20 +37,13 @@ fun RowDices(
     if (openDialog.value && diceInfo.value != null)
         DiceInfo(openDialog, diceInfo)
 
-    LaunchedEffect(key1 = player.value) {
-        selectRemainingDices(player, dicesTable, dicesSelectedPlayer)
+    LaunchedEffect(key1 = player.value, key2 = dialogPhaseShowing) {
+        selectRemainingDices(dialogPhaseShowing, player, dicesTable, dicesSelectedPlayer)
     }
 
-    LaunchedEffect(key1 = viewModel.turn.value) {
-        if (viewModel.turn.value === player.value.coinFace && player.value.reroll != 3)
-            dicesTable.value = getRandomDiceSides(dicesTable.value)
-
-        if (player.value.ia && viewModel.mode.value === MODES.ONE_PLAYER && player.value.coinFace === viewModel.turn.value) {
-            if (player.value.reroll > 0 && dicesTable.value.isNotEmpty())
-                selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
-            onPressEndTurn()
-        }
-
+    LaunchedEffect(key1 = viewModel.turn.value, key2 = dialogPhaseShowing) {
+        updateDices(viewModel, dicesTable, player, dialogPhaseShowing)
+        iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,dialogPhaseShowing,onPressEndTurn)
     }
 
     Row(
@@ -70,7 +62,7 @@ fun RowDices(
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
                         onClick = {
-                            if (player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
+                            if (!dialogPhaseShowing && player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
                                 selectDice(dicesSelectedPlayer, item, dicesTable, index)
                         },
                         onLongClick = {
@@ -95,6 +87,31 @@ fun RowDices(
     }
 }
 
+fun iaSelectDicesAutomatic(
+    viewModel: ViewModelOrlog,
+    dicesTable: MutableState<MutableList<DiceSide>>,
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
+    player: MutableState<Player>,
+    dialogPhaseShowing: Boolean,
+    onPressEndTurn: () -> Unit
+) {
+    if (player.value.ia && viewModel.turn.value === player.value.coinFace && !dialogPhaseShowing) {
+        if (player.value.reroll > 0 && dicesTable.value.isNotEmpty())
+            selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
+        onPressEndTurn()
+    }
+}
+
+fun updateDices(
+    viewModel: ViewModelOrlog,
+    dicesTable: MutableState<MutableList<DiceSide>>,
+    player: MutableState<Player>,
+    dialogPhaseShowing: Boolean
+) {
+    if (player.value.reroll != 3 && viewModel.turn.value === player.value.coinFace && !dialogPhaseShowing)
+        dicesTable.value = getRandomDiceSides(dicesTable.value)
+}
+
 fun selectDicesAutomatic(
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
@@ -109,11 +126,12 @@ fun selectDicesAutomatic(
 }
 
 fun selectRemainingDices(
+    dialogPhaseShowing: Boolean,
     player: MutableState<Player>,
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
 ) {
-    if (player.value.reroll == 0) {
+    if (player.value.reroll == 0 && !dialogPhaseShowing) {
         dicesTable.value.forEachIndexed { index, item ->
             selectDice(dicesSelectedPlayer, item, dicesTable, index)
         }

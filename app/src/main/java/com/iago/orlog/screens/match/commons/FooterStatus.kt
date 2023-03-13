@@ -18,6 +18,7 @@ import com.iago.orlog.utils.Player
 fun FooterStatus(
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
+    dialogPhaseShowing: Boolean,
     onPressEndTurn: ()->Unit,
     pressGodFavor: (god: God, favor: Favor) -> Unit
 ) {
@@ -34,7 +35,7 @@ fun FooterStatus(
             }
         }
         GodsList(
-            viewModel,
+            enablePress = !dialogPhaseShowing && viewModel.phase.value === Phase.GOD_FAVOR_PHASE,
             player.value.godFavors,
             Modifier
                 .fillMaxWidth()

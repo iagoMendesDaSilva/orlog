@@ -18,13 +18,11 @@ import com.iago.orlog.utils.Phase
 
 @Composable
 fun GodsList(
-    viewModel: ViewModelOrlog,
+    enablePress: Boolean,
     godFavors: List<God>,
     modifier: Modifier,
     pressGodFavor: (god: God, favor: Favor) -> Unit
 ) {
-
-    val enable = viewModel.phase.value == Phase.GOD_FAVOR_PHASE
 
     Row(
         modifier = modifier,
@@ -48,7 +46,7 @@ fun GodsList(
                     .height(85.dp)
                     .padding(horizontal = 3.dp)
                     .clickable {
-                        if (enable)
+                        if (enablePress)
                             openDialog.value = true
                     },
                 painter = painterResource(godFavor.img),
