@@ -16,6 +16,7 @@ enum class Phase {
 }
 
 data class Player(
+    val favorResolution: FavorResolution?,
     val gems: Int,
     val name: Int,
     val godFavors: MutableList<God>,

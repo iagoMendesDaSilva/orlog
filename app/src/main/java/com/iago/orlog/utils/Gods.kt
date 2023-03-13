@@ -5,6 +5,17 @@ import androidx.compose.runtime.MutableState
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
 
+enum class GodFavorStatus{
+    NO_PLAYER,
+    ONE_PLAYER,
+    TWO_PLAYERS
+}
+
+data class FavorResolution(
+    val favor: Favor,
+    val godId: Int,
+)
+
 data class Favor(
     val cost: Int,
     val effect: Float,
@@ -296,7 +307,7 @@ class GodFavors {
             opponent: MutableState<Player>,
             favor: Favor
         ) {
-            viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+            Log.d("TAG", "aaa")
         }
 
 
@@ -307,7 +318,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useVarFavor(
@@ -317,7 +328,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useOdinFavor(
@@ -327,7 +338,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useBragiFavor(
@@ -337,7 +348,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useMimirFavor(
@@ -347,7 +358,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useFreyjaFavor(
@@ -357,7 +368,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useLokiFavor(
@@ -367,7 +378,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useFriggFavor(
@@ -377,7 +388,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useSkuldFavor(
@@ -387,7 +398,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useSkadiFavor(
@@ -397,7 +408,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useHelFavor(
@@ -407,7 +418,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useFreyrFavor(
@@ -417,7 +428,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useBrunhildFavor(
@@ -427,7 +438,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useBaldrFavor(
@@ -437,7 +448,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useHeimdallFavor(
@@ -447,7 +458,7 @@ class GodFavors {
             favor: Favor
         ) {
 
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useUllrFavor(
@@ -456,7 +467,7 @@ class GodFavors {
             opponent: MutableState<Player>,
             favor: Favor
         ) {
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useVidarFavor(
@@ -466,7 +477,7 @@ class GodFavors {
             favor: Favor
         ) {
             //
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
 
         fun useIdunFavor(
@@ -484,7 +495,7 @@ class GodFavors {
             opponent: MutableState<Player>,
             favor: Favor
         ) {
-             viewModel.updatePlayer("gems", opponent.value.gems - favor.effect, opponent)
+             Log.d("TAG", "aaa")
         }
     }
 }
