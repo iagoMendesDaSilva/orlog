@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,10 +19,21 @@ import com.iago.orlog.utils.Player
 fun FooterStatus(
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
-    dialogPhaseShowing: Boolean,
-    onPressEndTurn: ()->Unit,
+    enablePress: Boolean,
+    onPressEndTurn: () -> Unit,
     pressGodFavor: (god: God, favor: Favor) -> Unit
 ) {
+
+    LaunchedEffect(key1 = viewModel.phase.value, block = {
+        iaSelectGodFavorAutomatic(
+            player.value,
+            enablePress,
+            viewModel,
+            pressGodFavor,
+            onPressEndTurn
+        )
+    })
+
     Row {
         Column(
             modifier = Modifier
@@ -30,18 +42,52 @@ fun FooterStatus(
                 .padding(end = 10.dp, top = 10.dp)
         ) {
             EndTurnButton(true) {
-              if(viewModel.phase.value === Phase.ROLL_PHASE && viewModel.turn.value === player.value.coinFace)
-                  onPressEndTurn()
+                if (viewModel.phase.value != Phase.RESOLUTION_PHASE && viewModel.turn.value === player.value.coinFace)
+                    onPressEndTurn()
             }
         }
         GodsList(
-            enablePress = !dialogPhaseShowing && viewModel.phase.value === Phase.GOD_FAVOR_PHASE,
-            player.value.godFavors,
+            enablePress = enablePress && viewModel.phase.value === Phase.GOD_FAVOR_PHASE,
+            player.value,
             Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(vertical = 5.dp),
             pressGodFavor,
         )
+    }
+}
+
+fun getAffordableGods(godFavors: List<God>, tokens: Int): List<God> {
+    return godFavors.filter { god ->
+        god.favors.any { favor ->
+            favor.cost <= tokens
+        }
+    }
+}
+
+fun getAffordableFavors(favors: List<Favor>, tokens: Int): List<Favor> {
+    return favors.filter { it.cost <= tokens }.sortedByDescending { it.effect }
+}
+
+fun iaSelectGodFavorAutomatic(
+    player: Player,
+    enablePress: Boolean,
+    viewModel: ViewModelOrlog,
+    pressGodFavor: (god: God, favor: Favor) -> Unit,
+    onPressEndTurn: () -> Unit
+) {
+    if (player.ia && viewModel.turn.value === player.coinFace && viewModel.phase.value == Phase.GOD_FAVOR_PHASE && enablePress) {
+        val affordableGods = getAffordableGods(player.godFavors, player.tokens)
+
+        val selectedGod =
+            if (affordableGods.isNotEmpty()) affordableGods.random()
+            else player.godFavors.random()
+
+        val affordableFavors = getAffordableFavors(selectedGod.favors, player.tokens)
+        if (affordableFavors.isNotEmpty()) {
+            val mostPowerfulFavor = affordableFavors.first()
+            pressGodFavor(selectedGod, mostPowerfulFavor)
+        } else onPressEndTurn()
     }
 }

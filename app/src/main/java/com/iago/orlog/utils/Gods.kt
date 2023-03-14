@@ -301,7 +301,7 @@ class GodFavors {
             opponent: MutableState<Player>,
             favor: Favor
         ) {
-            Log.d("TAG", "aaa")
+            Log.d("TAG", "USE THOR")
         }
 
 

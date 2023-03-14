@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,7 @@ import com.iago.orlog.utils.God
 fun GodInfoMatch(
     god: God,
     openDialog: MutableState<Boolean>,
+    tokens: Int,
     chooseGodFavor: (godFavor: Favor) -> Unit
 ) {
     val godFavor = remember { mutableStateOf<Favor?>(null) }
@@ -44,9 +44,9 @@ fun GodInfoMatch(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
-                    Header(god, openDialog)
-                    Favors(god, godFavor)
-                    ButtonChoose(godFavor, chooseGodFavor, openDialog)
+                Header(god, openDialog)
+                Favors(god, godFavor, tokens)
+                ButtonChoose(godFavor, chooseGodFavor, openDialog)
             }
         },
     )
@@ -120,7 +120,7 @@ fun Header(god: God, openDialog: MutableState<Boolean>) {
 }
 
 @Composable
-fun Favors(god: God, godFavor: MutableState<Favor?>) {
+fun Favors(god: God, godFavor: MutableState<Favor?>, tokens: Int) {
     Text(
         textAlign = TextAlign.End,
         style = MaterialTheme.typography.subtitle2,
@@ -131,12 +131,12 @@ fun Favors(god: God, godFavor: MutableState<Favor?>) {
         text = stringResource(R.string.priority, god.priority),
     )
     god.favors.forEach { favor ->
-        FavorItem(favor, godFavor)
+        FavorItem(favor, godFavor, tokens >= favor.cost)
     }
 }
 
 @Composable
-fun FavorItem(favor: Favor, godFavor: MutableState<Favor?>) {
+fun FavorItem(favor: Favor, godFavor: MutableState<Favor?>, enable: Boolean) {
 
     val active = godFavor.value === favor
 
@@ -155,8 +155,10 @@ fun FavorItem(favor: Favor, godFavor: MutableState<Favor?>) {
             )
             .padding(vertical = 10.dp, horizontal = 20.dp)
             .clickable {
-                godFavor.value = if (active) null else favor
-            },
+                if (enable)
+                    godFavor.value = if (active) null else favor
+            }
+            .alpha(if (enable) 1f else .5f),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -175,7 +177,7 @@ fun FavorItem(favor: Favor, godFavor: MutableState<Favor?>) {
             text = stringResource(R.string.symbol),
         )
         Text(
-            maxLines=1,
+            maxLines = 1,
             textAlign = TextAlign.Left,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary,

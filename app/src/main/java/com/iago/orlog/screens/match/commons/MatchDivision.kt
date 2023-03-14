@@ -7,7 +7,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +16,8 @@ import kotlinx.coroutines.launch
 fun MatchDivision(
     viewModel: ViewModelOrlog,
     rotation: Animatable<Float, AnimationVector1D>,
-    currentRotation: MutableState<Float>
+    currentRotation: MutableState<Float>,
+    coinRotating: MutableState<Boolean>
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -25,12 +25,14 @@ fun MatchDivision(
 
     LaunchedEffect(key1 = viewModel.turn.value) {
         if (!firstLoad.value)
-            animation(rotation, currentRotation, coroutineScope)
+            animation(rotation, currentRotation, coroutineScope, coinRotating)
         firstLoad.value = false
     }
 
-    Column(modifier = Modifier
-        .padding(vertical = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 20.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -42,7 +44,7 @@ fun MatchDivision(
                     .fillMaxWidth()
                     .weight(1f)
                     .background(MaterialTheme.colors.secondary)
-            ) {    }
+            ) { }
             Box(modifier = Modifier.width(100.dp))
             Row(
                 modifier = Modifier
@@ -59,9 +61,10 @@ fun animation(
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>,
     coroutineScope: CoroutineScope,
+    coinRotating: MutableState<Boolean>,
 ) {
     coroutineScope.launch {
-
+        coinRotating.value = true
         rotation.animateTo(
             targetValue = currentRotation.value + 180f,
             animationSpec = repeatable(
@@ -71,6 +74,7 @@ fun animation(
             )
         ) {
             currentRotation.value = value
+            coinRotating.value = false
         }
     }
 }

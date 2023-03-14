@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.match.commons
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -15,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.iago.orlog.R
-import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Phase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -24,13 +24,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun PhaseDialog(
     dialogPhaseShowing: MutableState<Boolean>,
-    viewModel: ViewModelOrlog
+    phase: Phase
 ) {
-
     val coroutineScope = rememberCoroutineScope()
     var dialogPhaseVisible = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = dialogPhaseShowing.value) {
+    LaunchedEffect(key1 = dialogPhaseShowing.value, key2 = phase) {
         if(dialogPhaseShowing.value)
             dialogPhaseVisible.value = true
     }
@@ -88,15 +87,15 @@ fun PhaseDialog(
             Text(
                 color = MaterialTheme.colors.primary,
                 style = MaterialTheme.typography.body2,
-                text = stringResource(getPhaseName(viewModel)),
+                text = stringResource(getPhaseName(phase)),
             )
         }
 
     }
 }
 
-fun getPhaseName(viewModel: ViewModelOrlog): Int {
-    return when (viewModel.phase.value) {
+fun getPhaseName(phase: Phase): Int {
+    return when (phase) {
         Phase.GOD_FAVOR_PHASE -> R.string.god_favor_phase
         Phase.RESOLUTION_PHASE -> R.string.resolution_phase
         else -> R.string.roll_phase

@@ -27,7 +27,7 @@ fun RowDices(
     dicesTable: MutableState<MutableList<DiceSide>>,
     player: MutableState<Player>,
     viewModel: ViewModelOrlog,
-    dialogPhaseShowing: Boolean,
+    enablePress: Boolean,
     onPressEndTurn: () -> Unit,
 ) {
 
@@ -37,13 +37,13 @@ fun RowDices(
     if (openDialog.value && diceInfo.value != null)
         DiceInfo(openDialog, diceInfo)
 
-    LaunchedEffect(key1 = player.value, key2 = dialogPhaseShowing) {
-        selectRemainingDices(dialogPhaseShowing, player, dicesTable, dicesSelectedPlayer)
+    LaunchedEffect(key1 = player.value, key2 = enablePress) {
+        selectRemainingDices(enablePress, player, dicesTable, dicesSelectedPlayer)
     }
 
-    LaunchedEffect(key1 = viewModel.turn.value, key2 = dialogPhaseShowing) {
-        updateDices(viewModel, dicesTable, player, dialogPhaseShowing)
-        iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,dialogPhaseShowing,onPressEndTurn)
+    LaunchedEffect(key1 = viewModel.turn.value, key2 = enablePress) {
+        updateDices(viewModel, dicesTable, player, enablePress)
+        iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,enablePress,onPressEndTurn)
     }
 
     Row(
@@ -62,7 +62,7 @@ fun RowDices(
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
                         onClick = {
-                            if (!dialogPhaseShowing && player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
+                            if (enablePress && player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
                                 selectDice(dicesSelectedPlayer, item, dicesTable, index)
                         },
                         onLongClick = {
@@ -92,10 +92,10 @@ fun iaSelectDicesAutomatic(
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     player: MutableState<Player>,
-    dialogPhaseShowing: Boolean,
+    enablePress: Boolean,
     onPressEndTurn: () -> Unit
 ) {
-    if (player.value.ia && viewModel.turn.value === player.value.coinFace && !dialogPhaseShowing) {
+    if (player.value.ia && viewModel.turn.value === player.value.coinFace && enablePress) {
         if (player.value.reroll > 0 && dicesTable.value.isNotEmpty())
             selectDicesAutomatic(dicesTable, dicesSelectedPlayer)
         onPressEndTurn()
@@ -106,9 +106,9 @@ fun updateDices(
     viewModel: ViewModelOrlog,
     dicesTable: MutableState<MutableList<DiceSide>>,
     player: MutableState<Player>,
-    dialogPhaseShowing: Boolean
+    enablePress: Boolean
 ) {
-    if (player.value.reroll != 3 && viewModel.turn.value === player.value.coinFace && !dialogPhaseShowing)
+    if (player.value.reroll != 3 && viewModel.turn.value === player.value.coinFace && enablePress)
         dicesTable.value = getRandomDiceSides(dicesTable.value)
 }
 
@@ -126,12 +126,12 @@ fun selectDicesAutomatic(
 }
 
 fun selectRemainingDices(
-    dialogPhaseShowing: Boolean,
+    enablePress: Boolean,
     player: MutableState<Player>,
     dicesTable: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
 ) {
-    if (player.value.reroll == 0 && !dialogPhaseShowing) {
+    if (player.value.reroll == 0 && enablePress) {
         dicesTable.value.forEachIndexed { index, item ->
             selectDice(dicesSelectedPlayer, item, dicesTable, index)
         }

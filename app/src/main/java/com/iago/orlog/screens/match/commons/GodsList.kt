@@ -15,11 +15,12 @@ import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Favor
 import com.iago.orlog.utils.God
 import com.iago.orlog.utils.Phase
+import com.iago.orlog.utils.Player
 
 @Composable
 fun GodsList(
     enablePress: Boolean,
-    godFavors: List<God>,
+    player: Player,
     modifier: Modifier,
     pressGodFavor: (god: God, favor: Favor) -> Unit
 ) {
@@ -29,12 +30,12 @@ fun GodsList(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        godFavors.forEach { godFavor ->
+        player.godFavors.forEach { godFavor ->
 
             val openDialog = remember { mutableStateOf(false) }
 
             if (openDialog.value)
-                GodInfoMatch(godFavor, openDialog) {
+                GodInfoMatch(godFavor, openDialog, player.tokens) {
                     pressGodFavor(godFavor, it)
                 }
             Image(
