@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.match
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.Animatable
@@ -10,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
@@ -19,15 +19,16 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
+fun MatchScreen(viewModel: ViewModelOrlog) {
 
     val context = LocalContext.current
-    var currentRotation = remember { mutableStateOf(0f) }
+    val currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
-    var coinRotating = remember { mutableStateOf(false) }
+    val coinRotating = remember { mutableStateOf(false) }
 
-    var dialogPhaseShowing = remember { mutableStateOf(true) }
+    val dialogPhaseShowing = remember { mutableStateOf(true) }
     val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
     val dicesTablePlayer2 = remember { mutableStateOf(getRandomDiceSides()) }
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
@@ -139,7 +140,7 @@ fun verifyPhase(
 ) {
     viewModel.phase.value =
         if (dicesTablePlayer1.value.isEmpty() && dicesTablePlayer2.value.isEmpty())
-            if (viewModel.round.value === 1 || viewModel.player1.value.favorResolution != null && viewModel.player2.value.favorResolution != null) Phase.RESOLUTION_PHASE
+            if (viewModel.round.value == 1 || viewModel.player1.value.favorResolution != null && viewModel.player2.value.favorResolution != null) Phase.RESOLUTION_PHASE
             else Phase.GOD_FAVOR_PHASE
         else
             Phase.ROLL_PHASE
@@ -160,21 +161,21 @@ fun verifyResolutionPhase(
 
 
     verifyFavorBeforeResolution(player1.value) {
-        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2)
+        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2, dicesSelectedPlayer1, dicesSelectedPlayer2)
     }
 
     verifyFavorBeforeResolution(player2.value) {
-        useGodFavor(context, player2.value.favorResolution!!, viewModel, player1, player2)
+        useGodFavor(context, player2.value.favorResolution!!, viewModel, player2, player1, dicesSelectedPlayer2, dicesSelectedPlayer1)
     }
 
     resolution(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
 
     verifyFavorAfterResolution(player1.value) {
-        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2)
+        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2,dicesSelectedPlayer1, dicesSelectedPlayer2)
     }
 
     verifyFavorAfterResolution(player2.value) {
-        useGodFavor(context, player2.value.favorResolution!!, viewModel, player1, player2)
+        useGodFavor(context, player2.value.favorResolution!!, viewModel, player2, player1, dicesSelectedPlayer2, dicesSelectedPlayer1)
     }
 
     verifyEndGame(
@@ -190,8 +191,8 @@ fun verifyResolutionPhase(
 }
 
 fun verifyFavorAfterResolution(player: Player, callBack: () -> Unit) {
-    if (player.favorResolution?.favor != null && player.favorResolution?.godId != null) {
-        val god = gods.firstOrNull { it.id == player.favorResolution?.godId }
+    if (player.favorResolution?.favor != null && player.favorResolution.godId != null) {
+        val god = gods.firstOrNull { it.id == player.favorResolution.godId }
         if (god?.useBeforeResolution == false) {
             callBack()
         }
@@ -199,8 +200,8 @@ fun verifyFavorAfterResolution(player: Player, callBack: () -> Unit) {
 }
 
 fun verifyFavorBeforeResolution(player: Player, callBack: () -> Unit) {
-    if (player.favorResolution?.favor != null && player.favorResolution?.godId != null) {
-        val god = gods.firstOrNull { it.id == player.favorResolution?.godId }
+    if (player.favorResolution?.favor != null && player.favorResolution.godId != null) {
+        val god = gods.firstOrNull { it.id == player.favorResolution.godId }
         if (god?.useBeforeResolution == true) {
             callBack()
         }
@@ -350,7 +351,7 @@ fun endTurn(viewModel: ViewModelOrlog, player: MutableState<Player>) {
 }
 
 fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<DiceSide> {
-    var dices = dices.mapIndexed { index, dice ->
+    val dices = dices.mapIndexed { index, dice ->
         val item = dice.sides[(dice.sides.indices.random())]
         val favor = dice.tokenSides.contains(item.side)
         item.copy(favor = favor, idDice = index)
@@ -380,13 +381,15 @@ fun useGodFavor(
     favor: FavorResolution,
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
-    opponent: MutableState<Player>
+    opponent: MutableState<Player>,
+    dicesSelectedPlayer: MutableState<List<DiceSide>>,
+    dicesSelectedOpponent: MutableState<List<DiceSide>>
 ) {
     val godFavorID = context.getString(favor.godId!!)
     val companionObject = GodFavors::class.companionObject
     if (companionObject != null) {
         val companionInstance = GodFavors::class.companionObjectInstance
         val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
-        functionEx.call(companionInstance, viewModel, player, opponent, favor.favor)
+        functionEx.call(companionInstance, viewModel, player, opponent, favor.favor, dicesSelectedPlayer, dicesSelectedOpponent)
     }
 }

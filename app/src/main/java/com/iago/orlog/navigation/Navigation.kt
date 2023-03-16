@@ -33,7 +33,7 @@ fun Navigation() {
         }
 
         composable(Screens.MatchScreen.name) {
-            MatchScreen(navController, viewModel)
+            MatchScreen(viewModel)
         }
 
         composable(Screens.GodsScreen.name) {

@@ -4,6 +4,10 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
+import com.iago.orlog.screens.match.getFinalDamage
+import com.iago.orlog.screens.match.getRandomDiceSides
+import com.iago.orlog.screens.match.verifyAttack
+import kotlin.math.ceil
 
 data class FavorResolution(
     val favor: Favor?,
@@ -299,9 +303,11 @@ class GodFavors {
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
-            Log.d("TAG", "USE THOR")
+            viewModel.updatePlayer("gems", opponent.value.gems - favor.effect.toInt(), opponent)
         }
 
 
@@ -309,187 +315,400 @@ class GodFavors {
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val opponentFavorResolution = opponent.value.favorResolution
+            val opponentFavorGod = gods.first { it.id == opponentFavorResolution!!.godId }
+            val opponentFavorCost =
+                opponentFavorGod.favors.filter { it.cost == opponentFavorResolution!!.favor!!.cost }
+            val indexFavorCost = opponentFavorGod.favors.indexOf(opponentFavorCost.first())
 
-             Log.d("TAG", "aaa")
+            var favorResolution = FavorResolution(null, null)
+
+            if (indexFavorCost >= 2)
+                favorResolution = FavorResolution(
+                    opponentFavorGod.favors[indexFavorCost - 1],
+                    opponentFavorGod.id
+                )
+
+            viewModel.updatePlayer("favorResolution", favorResolution, opponent)
         }
 
         fun useVarFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
-
-             Log.d("TAG", "aaa")
+            val tokensSpent = opponent.value.favorResolution!!.favor!!.cost
+            val gemsGained = tokensSpent * favor.effect.toInt()
+            val gemsPlayer = (player.value.gems + gemsGained).coerceAtMost(15)
+            viewModel.updatePlayer("gems", gemsPlayer, player)
         }
 
         fun useOdinFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val gemsSacrificed = player.value.gems.coerceAtMost(player.value.gems - 1)
+            val tokensGained = favor.effect.toInt() * gemsSacrificed
 
-             Log.d("TAG", "aaa")
+            viewModel.updatePlayer("tokens", player.value.tokens + tokensGained, player)
         }
 
         fun useBragiFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
-
-             Log.d("TAG", "aaa")
+            val hands = dicesSelectedPlayer.value.filter { it.side == DiceFace.HAND }.size
+            val tokensGained = favor.effect.toInt() * hands
+            viewModel.updatePlayer("tokens", tokensGained + player.value.tokens, player)
         }
 
         fun useMimirFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
 
-             Log.d("TAG", "aaa")
+            val playerAttacks = dicesSelectedPlayer.value.filter { it.side in diceFacesAttacks }
+            val opponentDefenses =
+                dicesSelectedOpponent.value.filter { it.side in diceFacesDefenses }
+
+            var playerDamage = 0
+            var opponentDefensesToUse = opponentDefenses.toMutableList()
+
+            playerAttacks.forEach { _ ->
+                verifyAttack(opponentDefensesToUse, DiceFace.HELMET) { damage, defensesUpdated ->
+                    if (damage)
+                        playerDamage += 1
+                    opponentDefensesToUse = defensesUpdated
+                }
+            }
+
+            val playerTokens = playerDamage * favor.effect
+            viewModel.updatePlayer("tokens", player.value.tokens + playerTokens, player)
+
         }
 
         fun useFreyjaFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val additionalDices = getRandomDiceSides().take(favor.effect.toInt())
 
-             Log.d("TAG", "aaa")
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            dicesUpdated.addAll(additionalDices)
+            dicesSelectedPlayer.value = dicesUpdated
         }
 
         fun useLokiFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
-
-             Log.d("TAG", "aaa")
+            val dicesNotBanned = dicesSelectedOpponent.value.subList(
+                favor.effect.toInt(),
+                dicesSelectedOpponent.value.size
+            )
+            dicesSelectedOpponent.value = dicesNotBanned
         }
 
         fun useFriggFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val rerollDices = getRandomDiceSides(dicesSelectedPlayer.value.toMutableList())
 
-             Log.d("TAG", "aaa")
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            (0..favor.effect.toInt()).forEachIndexed { index, i ->
+                dicesUpdated[index] = rerollDices[index]
+            }
+
+            dicesSelectedPlayer.value = dicesUpdated
+
         }
 
         fun useSkuldFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
 
-             Log.d("TAG", "aaa")
+            val arrows = dicesSelectedPlayer.value.filter { it.side == DiceFace.ARROW }.size
+            val tokensToDestroy = arrows * favor.effect.toInt()
+            val finalTokens = opponent.value.tokens - tokensToDestroy
+            viewModel.updatePlayer("tokens", finalTokens, opponent)
         }
 
         fun useSkadiFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val arrowSide = diceSides.first { it.side === DiceFace.ARROW }
+            val arrows = dicesSelectedPlayer.value.filter { it.side == DiceFace.ARROW }.size
+            val arrowsToAdd = arrows * favor.effect.toInt()
 
-             Log.d("TAG", "aaa")
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            (0..arrowsToAdd).forEach { _ -> dicesUpdated.add(arrowSide) }
+            dicesSelectedPlayer.value = dicesUpdated
         }
 
         fun useHelFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val playerAttacks = dicesSelectedPlayer.value.filter { it.side in diceFacesAttacks }
+            val opponentDefenses =
+                dicesSelectedOpponent.value.filter { it.side in diceFacesDefenses }
 
-             Log.d("TAG", "aaa")
+            var playerDamage = 0
+            var opponentDefensesToUse = opponentDefenses.toMutableList()
+
+            playerAttacks.forEach { _ ->
+                verifyAttack(opponentDefensesToUse, DiceFace.HELMET) { damage, defensesUpdated ->
+                    if (damage)
+                        playerDamage += 1
+                    opponentDefensesToUse = defensesUpdated
+                }
+            }
+
+            val playerGems = playerDamage * favor.effect
+            viewModel.updatePlayer("gems", player.value.gems + playerGems, player)
+
         }
 
         fun useFreyrFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val groups = dicesSelectedPlayer.value.groupBy { it.side }
+            val maxGroup = groups.maxByOrNull { it.value.size }
+            val diceSideMajority = diceSides.first { it.side === maxGroup?.key }
 
-             Log.d("TAG", "aaa")
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            (0..favor.effect.toInt()).forEach { _ -> dicesUpdated.add(diceSideMajority) }
+            dicesSelectedPlayer.value = dicesUpdated
         }
 
         fun useBrunhildFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
 
-             Log.d("TAG", "aaa")
+            val axeSide = diceSides.first { it.side === DiceFace.AXE }
+
+            val axes = dicesSelectedPlayer.value.filter { it.side == DiceFace.AXE }.size
+            val axes2 = dicesSelectedPlayer.value.filter { it.side == DiceFace.AXE2 }.size
+
+            val totalAxes = axes + axes2
+            val axesMultipliedByEffect = totalAxes * ceil(favor.effect).toInt()
+            val axesToAdd = totalAxes - axesMultipliedByEffect
+
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            (0..axesToAdd).forEach { _ -> dicesUpdated.add(axeSide) }
+            dicesSelectedPlayer.value = dicesUpdated
         }
 
         fun useBaldrFavor(
             viewModel: ViewModelOrlog,
             player: MutableState<Player>,
             opponent: MutableState<Player>,
-            favor: Favor
+            favor: Favor,
+            dicesSelectedPlayer: MutableState<List<DiceSide>>,
+            dicesSelectedOpponent: MutableState<List<DiceSide>>
         ) {
+            val helmetSide = diceSides.first { it.side === DiceFace.HELMET }
+            val shieldSide = diceSides.first { it.side === DiceFace.SHIELD }
 
-             Log.d("TAG", "aaa")
+            val helmets = dicesSelectedPlayer.value.filter { it.side == DiceFace.HELMET }.size
+            val shields = dicesSelectedPlayer.value.filter { it.side == DiceFace.SHIELD }.size
+
+            val helmetsToAdd = helmets * favor.effect.toInt()
+            val shieldsToAdd = shields * favor.effect.toInt()
+
+            val dicesUpdated = mutableListOf<DiceSide>()
+            dicesUpdated.addAll(dicesSelectedPlayer.value)
+
+            (0..helmetsToAdd).forEach { _ -> dicesUpdated.add(helmetSide) }
+            (0..shieldsToAdd).forEach { _ -> dicesUpdated.add(shieldSide) }
+            dicesSelectedPlayer.value = dicesUpdated
+        }
+    }
+
+    fun useHeimdallFavor(
+        viewModel: ViewModelOrlog,
+        player: MutableState<Player>,
+        opponent: MutableState<Player>,
+        favor: Favor,
+        dicesSelectedPlayer: MutableState<List<DiceSide>>,
+        dicesSelectedOpponent: MutableState<List<DiceSide>>
+    ) {
+        val playerDefenses = dicesSelectedPlayer.value.filter { it.side in diceFacesDefenses }
+        val opponentAttacks = dicesSelectedOpponent.value.filter { it.side in diceFacesAttacks }
+
+        var playerBlocks = 0
+        var playerDefensesToUse = playerDefenses.toMutableList()
+
+        opponentAttacks.forEach { diceSide ->
+            val defenseDiceSide =
+                if (diceSide.side === DiceFace.ARROW) DiceFace.SHIELD else DiceFace.HELMET
+            verifyBlock(playerDefensesToUse, defenseDiceSide) { block, defensesUpdated ->
+                if (block)
+                    playerBlocks += 1
+                playerDefensesToUse = defensesUpdated
+            }
         }
 
-        fun useHeimdallFavor(
-            viewModel: ViewModelOrlog,
-            player: MutableState<Player>,
-            opponent: MutableState<Player>,
-            favor: Favor
-        ) {
+        val playerGems = playerBlocks * favor.effect
+        viewModel.updatePlayer("gems", player.value.gems + playerGems, player)
 
-             Log.d("TAG", "aaa")
+    }
+
+    fun useUllrFavor(
+        viewModel: ViewModelOrlog,
+        player: MutableState<Player>,
+        opponent: MutableState<Player>,
+        favor: Favor,
+        dicesSelectedPlayer: MutableState<List<DiceSide>>,
+        dicesSelectedOpponent: MutableState<List<DiceSide>>
+    ) {
+        var shieldsRemoved = 0
+        dicesSelectedOpponent.value = dicesSelectedOpponent.value.filterNot {
+            if (it.side == DiceFace.SHIELD && shieldsRemoved < favor.effect) {
+                shieldsRemoved++
+                true
+            } else false
+        }
+    }
+
+    fun useVidarFavor(
+        viewModel: ViewModelOrlog,
+        player: MutableState<Player>,
+        opponent: MutableState<Player>,
+        favor: Favor,
+        dicesSelectedPlayer: MutableState<List<DiceSide>>,
+        dicesSelectedOpponent: MutableState<List<DiceSide>>
+    ) {
+        var helmetsRemoved = 0
+        dicesSelectedOpponent.value = dicesSelectedOpponent.value.filterNot {
+            if (it.side == DiceFace.HELMET && helmetsRemoved < favor.effect) {
+                helmetsRemoved++
+                true
+            } else false
         }
 
-        fun useUllrFavor(
-            viewModel: ViewModelOrlog,
-            player: MutableState<Player>,
-            opponent: MutableState<Player>,
-            favor: Favor
-        ) {
-             Log.d("TAG", "aaa")
-        }
+    }
 
-        fun useVidarFavor(
-            viewModel: ViewModelOrlog,
-            player: MutableState<Player>,
-            opponent: MutableState<Player>,
-            favor: Favor
-        ) {
-            //
-             Log.d("TAG", "aaa")
-        }
+    fun useIdunFavor(
+        viewModel: ViewModelOrlog,
+        player: MutableState<Player>,
+        opponent: MutableState<Player>,
+        favor: Favor,
+        dicesSelectedPlayer: MutableState<List<DiceSide>>,
+        dicesSelectedOpponent: MutableState<List<DiceSide>>
+    ) {
+        val playerGems = player.value.gems + favor.effect
+        viewModel.updatePlayer("gems", player.value.gems + playerGems, player)
+    }
 
-        fun useIdunFavor(
-            viewModel: ViewModelOrlog,
-            player: MutableState<Player>,
-            opponent: MutableState<Player>,
-            favor: Favor
-        ) {
-            viewModel.updatePlayer("gems", player.value.gems + favor.effect, player)
-        }
+    fun useTyrFavor(
+        viewModel: ViewModelOrlog,
+        player: MutableState<Player>,
+        opponent: MutableState<Player>,
+        favor: Favor,
+        dicesSelectedPlayer: MutableState<List<DiceSide>>,
+        dicesSelectedOpponent: MutableState<List<DiceSide>>
+    ) {
+        val gemsSacrificed = player.value.gems.coerceAtMost(favor.effect.toInt())
+        val playerGems = player.value.gems - gemsSacrificed
+        val opponentTokens = opponent.value.tokens - playerGems
 
-        fun useTyrFavor(
-            viewModel: ViewModelOrlog,
-            player: MutableState<Player>,
-            opponent: MutableState<Player>,
-            favor: Favor
-        ) {
-             Log.d("TAG", "aaa")
+        viewModel.updatePlayer("gems", playerGems, player)
+        viewModel.updatePlayer("tokens", opponentTokens, opponent)
+    }
+
+
+    private fun verifyBlock(
+        opponentDefenses: MutableList<DiceSide>,
+        diceFace: DiceFace,
+        callback: (block: Boolean, opponentDefenses: MutableList<DiceSide>) -> Unit
+    ) {
+        var block = false
+        if (opponentDefenses.any { it.side == diceFace }) {
+            val index = opponentDefenses.indexOfFirst { it.side === diceFace }
+            opponentDefenses.removeAt(index)
+            block = true
         }
+        callback(block, opponentDefenses)
+    }
+
+    fun verifyAttack(
+        opponentDefenses: MutableList<DiceSide>,
+        diceFace: DiceFace,
+        onAttack: (damage: Boolean, opponentDefenses: MutableList<DiceSide>) -> Unit
+    ) {
+        var damage = false
+        if (opponentDefenses.any { it.side == diceFace }) {
+            val index = opponentDefenses.indexOfFirst { it.side === diceFace }
+            opponentDefenses.removeAt(index)
+        } else
+            damage = true
+        onAttack(damage, opponentDefenses)
     }
 }
