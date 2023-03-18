@@ -83,6 +83,10 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0-beta01"
 
+    //Reflect
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0")
 
+    //Pager
+    implementation("com.google.accompanist:accompanist-pager:0.13.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
 }

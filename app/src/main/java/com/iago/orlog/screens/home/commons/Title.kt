@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -23,7 +22,7 @@ import com.iago.orlog.R
 import com.iago.orlog.navigation.Screens
 
 @Composable
-fun Header(navController: NavHostController) {
+fun Title() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +31,8 @@ fun Header(navController: NavHostController) {
                 color = MaterialTheme.colors.onBackground
             )
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             fontSize = 35.sp,
@@ -47,28 +47,5 @@ fun Header(navController: NavHostController) {
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary,
         )
-        Row(
-            modifier = Modifier
-                .padding(top = 25.dp)
-                .clickable {
-                    navController.navigate(Screens.InstructionScreen.name)
-                },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                tint = MaterialTheme.colors.secondary,
-                contentDescription = stringResource(R.string.info),
-                modifier = Modifier
-                    .size(18.dp),
-            )
-            Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(R.string.how_to_play),
-                style = MaterialTheme.typography.h2,
-                modifier = Modifier.padding(start = 5.dp),
-                color = MaterialTheme.colors.secondary,
-            )
-        }
     }
 }
