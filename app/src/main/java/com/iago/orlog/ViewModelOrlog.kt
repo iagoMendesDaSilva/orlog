@@ -60,11 +60,6 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         playerToChange.value = newPlayer
     }
 
-    fun getImageCoinByTurn(coin: Coin? = null): Int {
-        val value = coin ?: turn.value
-        return if (value == Coin.UNDEFINED || value == Coin.FACE_UP) R.drawable.coin_face else R.drawable.coin_no_face
-    }
-
     fun updateMode(newMode: MODES) {
         mode.value = newMode
     }

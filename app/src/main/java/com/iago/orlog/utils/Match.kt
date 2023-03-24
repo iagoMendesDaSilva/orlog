@@ -8,6 +8,19 @@ enum class Coin {
     UNDEFINED,
 }
 
+object Coins {
+    val head =
+        CoinHeadTail(title = R.string.head, image = R.drawable.coin_face, icon= R.drawable.head,)
+    val tail =
+        CoinHeadTail(title = R.string.tail, image =R.drawable.coin_no_face, icon =  R.drawable.head,)
+}
+
+data class CoinHeadTail(
+    val title: Int,
+    val image: Int,
+    val icon: Int,
+)
+
 enum class Phase {
     ROLL_PHASE,
     GOD_FAVOR_PHASE,

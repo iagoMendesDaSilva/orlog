@@ -19,6 +19,7 @@ import com.iago.orlog.navigation.Screens
 import com.iago.orlog.screens.coin.commons.ButtonCoin
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.utils.Coin
+import com.iago.orlog.utils.Coins
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -27,12 +28,13 @@ import kotlinx.coroutines.launch
 fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val coroutineScope = rememberCoroutineScope()
-    var played = remember { mutableStateOf(false) }
-    var currentRotation = remember { mutableStateOf(0f) }
-    var decision = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
-    var coinResult = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
 
+    var played = remember { mutableStateOf(false) }
+    var decision = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
+
+    var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
+    var coinResult = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
 
     LaunchedEffect(key1 = decision.value) {
         if (decision.value != Coin.UNDEFINED && coinResult.value == Coin.UNDEFINED)
@@ -49,11 +51,13 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Header(decision.value, coinResult.value, played.value)
-        Coin(rotation, coinResult.value, viewModel, 125.dp) {}
-        if (played.value)
-            ButtonChooseGodFavors(navController)
-        else
-            ButtonsHeadNTail(decision)
+        Coin(rotation, coinResult.value, 125.dp)
+        Box(modifier = Modifier.height(150.dp), contentAlignment = Alignment.BottomCenter) {
+            if (played.value)
+                ButtonChooseGodFavors(navController)
+            else
+                ButtonsHeadNTail(decision)
+        }
     }
 }
 
@@ -72,7 +76,7 @@ fun ButtonChooseGodFavors(navController: NavHostController) {
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colors.secondary,
             )
-            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .padding(vertical = 12.dp, horizontal = 20.dp)
             .clickable { navController.navigate(Screens.GodsScreen.name) },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -110,14 +114,14 @@ fun Header(decision: Coin, coinResult: Coin, played: Boolean) {
 fun ButtonsHeadNTail(decision: MutableState<Coin>) {
     Row() {
         ButtonCoin(
-            text = R.string.head,
+            coin = Coins.head,
             active = decision.value == Coin.FACE_UP,
             enable = decision.value == Coin.UNDEFINED
         ) {
             decision.value = Coin.FACE_UP
         }
         ButtonCoin(
-            text = R.string.tail,
+            coin = Coins.tail,
             enable = decision.value == Coin.UNDEFINED,
             active = decision.value == Coin.FACE_DOWN
         ) {
@@ -157,12 +161,12 @@ fun animation(
     coroutineScope.launch {
 
         coinResult.value = Coin.FACE_UP
-        val random = (5..10).random()
+        val numberRotations = (5..10).random()
 
         rotation.animateTo(
             targetValue = currentRotation.value + 180f,
             animationSpec = repeatable(
-                iterations = random,
+                iterations = numberRotations,
                 animation = tween(350, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
             )

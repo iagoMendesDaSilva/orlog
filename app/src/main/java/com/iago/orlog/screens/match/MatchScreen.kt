@@ -55,7 +55,7 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
     verifyPhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
+        Coin(rotation, viewModel.turn.value, 100.dp)
     }
 
     Column(
@@ -90,7 +90,7 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Coin(rotation, viewModel.turn.value, viewModel, 100.dp) {}
+        Coin(rotation, viewModel.turn.value, 100.dp)
     }
 
     PhaseDialog(dialogPhaseShowing, viewModel.phase.value)
