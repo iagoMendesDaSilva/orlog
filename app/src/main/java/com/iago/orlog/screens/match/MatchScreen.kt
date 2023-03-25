@@ -2,7 +2,6 @@ package com.iago.orlog.screens.match
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -11,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
@@ -22,12 +22,13 @@ import kotlin.reflect.full.functions
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MatchScreen(viewModel: ViewModelOrlog) {
+fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val context = LocalContext.current
     val currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
     val delayingNextPhase = remember { mutableStateOf(false) }
+    val winner = remember { mutableStateOf<Player?>(null) }
 
     val dialogPhaseShowing = remember { mutableStateOf(true) }
     val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
@@ -55,6 +56,7 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
                 dicesTablePlayer2,
                 dicesSelectedPlayer1,
                 dicesSelectedPlayer2,
+                winner,
             )
     })
 
@@ -77,7 +79,6 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
             dicesSelectedPlayer2,
             dicesTablePlayer2,
             enablePress,
-            delayingNextPhase,
         )
         MatchDivision(viewModel, rotation, currentRotation)
         PlayerTable(
@@ -89,13 +90,15 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
             dicesSelectedPlayer1,
             dicesTablePlayer1,
             enablePress,
-            delayingNextPhase
         )
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Coin(rotation, viewModel.turn.value, 100.dp)
     }
+
+    if (winner.value != null)
+        EndGameDialog(navController, winner, viewModel)
 
     PhaseDialog(dialogPhaseShowing, viewModel.phase.value)
 }
@@ -108,7 +111,6 @@ fun PlayerTable(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     dicesTablePlayer: MutableState<MutableList<DiceSide>>,
     enablePress: Boolean,
-    delayingNextPhase: MutableState<Boolean>
 ) {
     Column(
         modifier = modifier,
@@ -158,7 +160,8 @@ fun verifyResolutionPhase(
     dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
     dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer1: MutableState<List<DiceSide>>,
-    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>,
+    winner: MutableState<Player?>
 ) {
 
     val player1 = viewModel.player1
@@ -222,7 +225,8 @@ fun verifyResolutionPhase(
         dicesTablePlayer1,
         dicesTablePlayer2,
         dicesSelectedPlayer1,
-        dicesSelectedPlayer2
+        dicesSelectedPlayer2,
+        winner,
     )
 
 }
@@ -252,12 +256,13 @@ fun verifyEndGame(
     dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
     dicesTablePlayer2: MutableState<MutableList<DiceSide>>,
     dicesSelectedPlayer1: MutableState<List<DiceSide>>,
-    dicesSelectedPlayer2: MutableState<List<DiceSide>>
+    dicesSelectedPlayer2: MutableState<List<DiceSide>>,
+    winner: MutableState<Player?>
 ) {
     viewModel.round.value = viewModel.round.value + 1
 
     if (player1.value.gems <= 0 || player2.value.gems <= 0)
-        Log.d("TAG", "ENDGAME")
+        winner.value = if (player1.value.gems > 0) player1.value else player2.value
     else {
         restartRollPhase(
             viewModel,

@@ -15,9 +15,9 @@ enum class StatusInfoMatch {
 
 object Coins {
     val head =
-        CoinHeadTail(title = R.string.head, image = R.drawable.coin_face, icon= R.drawable.head,)
+        CoinHeadTail(title = R.string.head, image = R.drawable.coin_head, icon= R.drawable.head,)
     val tail =
-        CoinHeadTail(title = R.string.tail, image =R.drawable.coin_no_face, icon =  R.drawable.tail,)
+        CoinHeadTail(title = R.string.tail, image =R.drawable.coin_tail, icon =  R.drawable.tail,)
 }
 
 data class CoinHeadTail(

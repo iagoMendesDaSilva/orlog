@@ -84,7 +84,7 @@ fun ListModes(
                             viewModel.updateMode(current.mode)
                             navController.navigate(Screens.CoinScreen.name)
                         } else {
-                            Toast.makeText(context, R.string.not_avaliable,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.not_available,Toast.LENGTH_SHORT).show()
                         }
                     }
             )

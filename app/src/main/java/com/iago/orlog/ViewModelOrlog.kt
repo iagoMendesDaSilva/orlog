@@ -16,7 +16,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     private val initialPlayer1 = Player(
         ia = false,
-        favorResolution=null,
+        favorResolution = null,
         gems = 15,
         name = R.string.player1,
         godFavors = mutableListOf(),
@@ -94,6 +94,15 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
             list.remove(god)
 
         viewModel.updatePlayer("godFavors", list)
+    }
+
+    fun resetGame() {
+        round.value = 1
+        turn.value = Coin.UNDEFINED
+        mode.value = MODES.ONE_PLAYER
+        player1.value = initialPlayer1
+        player2.value = initialPlayer2
+        phase.value = Phase.ROLL_PHASE
     }
 
 

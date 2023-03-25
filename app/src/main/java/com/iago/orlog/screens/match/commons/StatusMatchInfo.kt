@@ -68,8 +68,8 @@ fun StatusMatchInfo(value: Int, statusInfoMatch: StatusInfoMatch) {
         Text(
             fontSize = 14.sp,
             color = color.value,
-            text = value.toString(),
             fontWeight = FontWeight.Bold,
+            text = value.coerceAtLeast(0).toString(),
         )
         if (differenceFormat.isNotEmpty())
             Text(
