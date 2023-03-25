@@ -4,19 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.coin.commons.Coin
 import com.iago.orlog.screens.match.commons.*
 import com.iago.orlog.utils.*
+import kotlinx.coroutines.delay
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
@@ -28,7 +27,7 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
     val context = LocalContext.current
     val currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
-    val coinRotating = remember { mutableStateOf(false) }
+    val delayingNextPhase = remember { mutableStateOf(false) }
 
     val dialogPhaseShowing = remember { mutableStateOf(true) }
     val dicesTablePlayer1 = remember { mutableStateOf(getRandomDiceSides()) }
@@ -36,9 +35,14 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
     val dicesSelectedPlayer1 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
     val dicesSelectedPlayer2 = remember { mutableStateOf<List<DiceSide>>(emptyList()) }
 
-    val enablePress = !dialogPhaseShowing.value && !coinRotating.value
+    val enablePress = !dialogPhaseShowing.value && !rotation.isRunning && !delayingNextPhase.value
 
     LaunchedEffect(key1 = viewModel.phase.value, block = {
+        if (viewModel.round.value != 1 && viewModel.phase.value == Phase.ROLL_PHASE) {
+            delayingNextPhase.value = true
+            delay(2000L)
+            delayingNextPhase.value = false
+        }
         dialogPhaseShowing.value = true
     })
 
@@ -56,10 +60,6 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
 
     verifyPhase(dicesTablePlayer1, dicesTablePlayer2, viewModel)
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Coin(rotation, viewModel.turn.value, 100.dp)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,9 +76,10 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
             if (viewModel.player1.value.ia) viewModel.player1 else viewModel.player2,
             dicesSelectedPlayer2,
             dicesTablePlayer2,
-            enablePress
+            enablePress,
+            delayingNextPhase,
         )
-        MatchDivision(viewModel, rotation, currentRotation, coinRotating)
+        MatchDivision(viewModel, rotation, currentRotation)
         PlayerTable(
             Modifier
                 .fillMaxHeight()
@@ -87,7 +88,8 @@ fun MatchScreen(viewModel: ViewModelOrlog) {
             if (viewModel.player1.value.ia) viewModel.player2 else viewModel.player1,
             dicesSelectedPlayer1,
             dicesTablePlayer1,
-            enablePress
+            enablePress,
+            delayingNextPhase
         )
     }
 
@@ -105,7 +107,8 @@ fun PlayerTable(
     player: MutableState<Player>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     dicesTablePlayer: MutableState<MutableList<DiceSide>>,
-    enablePress: Boolean
+    enablePress: Boolean,
+    delayingNextPhase: MutableState<Boolean>
 ) {
     Column(
         modifier = modifier,
@@ -147,7 +150,6 @@ fun verifyPhase(
             else Phase.GOD_FAVOR_PHASE
         else
             Phase.ROLL_PHASE
-
 }
 
 fun verifyResolutionPhase(
@@ -164,21 +166,53 @@ fun verifyResolutionPhase(
 
 
     verifyFavorBeforeResolution(player1.value) {
-        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2, dicesSelectedPlayer1, dicesSelectedPlayer2)
+        useGodFavor(
+            context,
+            player1.value.favorResolution!!,
+            viewModel,
+            player1,
+            player2,
+            dicesSelectedPlayer1,
+            dicesSelectedPlayer2
+        )
     }
 
     verifyFavorBeforeResolution(player2.value) {
-        useGodFavor(context, player2.value.favorResolution!!, viewModel, player2, player1, dicesSelectedPlayer2, dicesSelectedPlayer1)
+        useGodFavor(
+            context,
+            player2.value.favorResolution!!,
+            viewModel,
+            player2,
+            player1,
+            dicesSelectedPlayer2,
+            dicesSelectedPlayer1
+        )
     }
 
     resolution(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
 
     verifyFavorAfterResolution(player1.value) {
-        useGodFavor(context, player1.value.favorResolution!!, viewModel, player1, player2,dicesSelectedPlayer1, dicesSelectedPlayer2)
+        useGodFavor(
+            context,
+            player1.value.favorResolution!!,
+            viewModel,
+            player1,
+            player2,
+            dicesSelectedPlayer1,
+            dicesSelectedPlayer2
+        )
     }
 
     verifyFavorAfterResolution(player2.value) {
-        useGodFavor(context, player2.value.favorResolution!!, viewModel, player2, player1, dicesSelectedPlayer2, dicesSelectedPlayer1)
+        useGodFavor(
+            context,
+            player2.value.favorResolution!!,
+            viewModel,
+            player2,
+            player1,
+            dicesSelectedPlayer2,
+            dicesSelectedPlayer1
+        )
     }
 
     verifyEndGame(
@@ -393,6 +427,14 @@ fun useGodFavor(
     if (companionObject != null) {
         val companionInstance = GodFavors::class.companionObjectInstance
         val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
-        functionEx.call(companionInstance, viewModel, player, opponent, favor.favor, dicesSelectedPlayer, dicesSelectedOpponent)
+        functionEx.call(
+            companionInstance,
+            viewModel,
+            player,
+            opponent,
+            favor.favor,
+            dicesSelectedPlayer,
+            dicesSelectedOpponent
+        )
     }
 }

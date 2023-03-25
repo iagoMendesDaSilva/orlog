@@ -1,6 +1,5 @@
 package com.iago.orlog.screens.match.commons
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,7 +52,6 @@ fun RowDices(
         updateDices(viewModel, dicesTable, player, enablePress)
         delay(1000L)
         iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,enablePress,onPressEndTurn)
-
     }
 
     Row(

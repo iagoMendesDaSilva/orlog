@@ -17,7 +17,6 @@ fun MatchDivision(
     viewModel: ViewModelOrlog,
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>,
-    coinRotating: MutableState<Boolean>
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -25,7 +24,7 @@ fun MatchDivision(
 
     LaunchedEffect(key1 = viewModel.turn.value) {
         if (!firstLoad.value)
-            animation(rotation, currentRotation, coroutineScope, coinRotating)
+            animation(rotation, currentRotation, coroutineScope)
         firstLoad.value = false
     }
 
@@ -61,10 +60,8 @@ fun animation(
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>,
     coroutineScope: CoroutineScope,
-    coinRotating: MutableState<Boolean>,
 ) {
     coroutineScope.launch {
-        coinRotating.value = true
         rotation.animateTo(
             targetValue = currentRotation.value + 180f,
             animationSpec = repeatable(
@@ -74,7 +71,6 @@ fun animation(
             )
         ) {
             currentRotation.value = value
-            coinRotating.value = false
         }
     }
 }
