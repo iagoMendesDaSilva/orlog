@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iago.orlog.commons.Logo
-import com.iago.orlog.ui.theme.Error
 import com.iago.orlog.utils.StatusInfoMatch
 import kotlinx.coroutines.delay
 import kotlin.math.abs
