@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
@@ -111,6 +113,7 @@ fun PlayerTable(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         HeaderStatus(player)
+
         Column(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom

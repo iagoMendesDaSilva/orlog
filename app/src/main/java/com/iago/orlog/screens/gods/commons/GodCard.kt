@@ -12,7 +12,10 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -24,10 +27,17 @@ import com.iago.orlog.utils.Player
 @Composable
 fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val padding = with(LocalDensity.current) {
+        screenWidth * 0.01f
+    }
+
     val active = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = player.value.name ){
+    LaunchedEffect(key1 = player.value.name) {
         active.value = false
     }
 
@@ -36,7 +46,7 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
 
     Column(
         modifier = Modifier
-            .height(260.dp)
+            .aspectRatio(.65f)
             .background(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colors.onBackground
@@ -63,9 +73,9 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
             tint = MaterialTheme.colors.secondary,
             contentDescription = stringResource(R.string.info),
             modifier = Modifier
-                .padding(end = 10.dp)
+                .padding(end = padding * 2.5f)
                 .align(Alignment.End)
-                .size(18.dp)
+                .size(padding * 5)
                 .clickable {
                     openDialog.value = true
                 },
@@ -75,7 +85,7 @@ fun GodCard(god: God, player: MutableState<Player>, viewModel: ViewModelOrlog) {
             modifier = Modifier
                 .fillMaxHeight(.9f)
                 .fillMaxWidth(.9f)
-                .padding(10.dp),
+                .padding(padding),
             painter = rememberAsyncImagePainter(god.img),
             contentDescription = stringResource(id = god.name),
         )

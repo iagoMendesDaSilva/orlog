@@ -1,19 +1,23 @@
 package com.iago.orlog.screens.home.commons
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.navigation.Screens
 import com.iago.orlog.utils.Mode
@@ -34,7 +39,7 @@ fun ListModes(
     navController: NavHostController,
     viewModel: ViewModelOrlog,
 ) {
-
+    val context = LocalContext.current
     val pageState = rememberPagerState(pageCount = gameModes.size, initialPage = gameModes.size / 2)
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,6 +83,8 @@ fun ListModes(
                         if (current.enabled) {
                             viewModel.updateMode(current.mode)
                             navController.navigate(Screens.CoinScreen.name)
+                        } else {
+                            Toast.makeText(context, R.string.not_avaliable,Toast.LENGTH_SHORT).show()
                         }
                     }
             )

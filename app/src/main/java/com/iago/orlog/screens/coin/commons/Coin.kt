@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.coin.commons
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.Image
@@ -20,6 +21,15 @@ fun Coin(
     coinResult: Coin,
     size: Dp,
 ) {
+
+    val imageWhileRunning =if (rotation.value < 100f)
+        Coins.tail.image
+    else Coins.head.image
+
+    val imageDecision =if (coinResult == Coin.FACE_DOWN)
+        Coins.tail.image
+    else Coins.head.image
+
     Box(
         modifier = Modifier
             .width(size)
@@ -27,7 +37,7 @@ fun Coin(
             .padding(10.dp)
             .graphicsLayer {
                 rotationY = rotation.value
-                cameraDistance = 12f * density
+                cameraDistance = 24f * density
             }
     ) {
         Image(
@@ -35,9 +45,7 @@ fun Coin(
             modifier = Modifier.fillMaxSize(),
             contentDescription = null,
             painter = painterResource(
-                if (coinResult === Coin.FACE_DOWN)
-                    Coins.tail.image
-                else Coins.head.image
+                if(rotation.isRunning) imageWhileRunning else imageDecision
             ),
         )
 

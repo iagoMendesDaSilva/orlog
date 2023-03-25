@@ -28,7 +28,7 @@ fun EndTurnButton(
         modifier = Modifier
             .alpha(if (enable) 1f else .5f)
             .fillMaxWidth()
-            .height(85.dp)
+            .aspectRatio(2f)
             .background(
                 MaterialTheme.colors.onBackground,
                 MaterialTheme.shapes.small

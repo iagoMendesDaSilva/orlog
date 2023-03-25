@@ -1,6 +1,7 @@
 package com.iago.orlog.screens.match.commons
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -8,13 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Favor
 import com.iago.orlog.utils.God
-import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
 
 @Composable
@@ -28,7 +28,7 @@ fun GodsList(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom
     ) {
         player.godFavors.forEach { godFavor ->
 
@@ -42,9 +42,8 @@ fun GodsList(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .weight(1f)
-                    .height(85.dp)
                     .padding(horizontal = 3.dp)
                     .clickable {
                         if (enablePress)

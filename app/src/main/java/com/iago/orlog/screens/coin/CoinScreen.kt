@@ -1,5 +1,6 @@
 package com.iago.orlog.screens.coin
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
@@ -43,6 +45,9 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
             }
     }
 
+    if (played.value)
+        DialogResult(navController, decision.value, coinResult.value)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,60 +55,86 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Header(decision.value, coinResult.value, played.value)
+        Header()
         Coin(rotation, coinResult.value, 125.dp)
-        Box(modifier = Modifier.height(150.dp), contentAlignment = Alignment.BottomCenter) {
-            if (played.value)
-                ButtonChooseGodFavors(navController)
-            else
-                ButtonsHeadNTail(decision)
-        }
+        ButtonsHeadNTail(decision)
+
     }
 }
 
 @Composable
-fun ButtonChooseGodFavors(navController: NavHostController) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(.9f)
-            .padding(horizontal = 10.dp)
-            .background(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colors.onBackground,
-            )
-            .border(
-                width = 1.dp,
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colors.secondary,
-            )
-            .padding(vertical = 12.dp, horizontal = 20.dp)
-            .clickable { navController.navigate(Screens.GodsScreen.name) },
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.secondary,
-            text = stringResource(R.string.select_gods_favors),
-        )
-    }
+fun DialogResult(
+    navController: NavHostController,
+    decision: Coin,
+    coinResult: Coin
+) {
+    val winOrLose = if (decision == coinResult) R.string.won else R.string.lost
+    val player = if (decision == coinResult) R.string.you_are_player1 else R.string.you_are_player2
+
+    Dialog(
+        onDismissRequest = {},
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colors.onBackground,
+                        shape = MaterialTheme.shapes.medium,
+                    )
+                    .padding(vertical = 40.dp, horizontal = 25.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+
+                ) {
+                Text(
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.secondary,
+                    text = stringResource(winOrLose),
+                )
+                Text(
+                    style = MaterialTheme.typography.subtitle2,
+                    color = MaterialTheme.colors.primary,
+                    text = stringResource(player),
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(.9f)
+                        .background(
+                            shape = MaterialTheme.shapes.large,
+                            color = MaterialTheme.colors.onBackground,
+                        )
+                        .border(
+                            width = 1.dp,
+                            shape = MaterialTheme.shapes.large,
+                            color = MaterialTheme.colors.secondary,
+                        )
+                        .padding(vertical = 12.dp, horizontal = 20.dp)
+                        .clickable { navController.navigate(Screens.GodsScreen.name) },
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.secondary,
+                        text = stringResource(R.string.select_gods_favors),
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable
-fun Header(decision: Coin, coinResult: Coin, played: Boolean) {
-
-    val winOrLose = if (decision === coinResult) R.string.won else R.string.lost
-    val player = if (decision === coinResult) R.string.you_are_player1 else R.string.you_are_player2
-
-
+fun Header() {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
         Text(
-            text = stringResource(if (played) winOrLose else R.string.coin),
+            text = stringResource( R.string.coin),
             style = MaterialTheme.typography.h1,
             color = MaterialTheme.colors.primary,
         )
         Text(
-            text = stringResource(if (played) player else R.string.coin_desc),
+            text = stringResource( R.string.coin_desc),
             style = MaterialTheme.typography.h2,
             color = MaterialTheme.colors.secondary,
         )
@@ -112,7 +143,7 @@ fun Header(decision: Coin, coinResult: Coin, played: Boolean) {
 
 @Composable
 fun ButtonsHeadNTail(decision: MutableState<Coin>) {
-    Row() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         ButtonCoin(
             coin = Coins.head,
             active = decision.value == Coin.FACE_UP,
@@ -142,7 +173,11 @@ fun decideTurns(
     viewModel.updateTurn(coinResult)
     viewModel.updatePlayer("coinFace", player1Turn, viewModel.player1)
     viewModel.updatePlayer("coinFace", player2Turn, viewModel.player2)
-    viewModel.updatePlayer("ia", true, if (decision != coinResult) viewModel.player1 else viewModel.player2)
+    viewModel.updatePlayer(
+        "ia",
+        true,
+        if (decision != coinResult) viewModel.player1 else viewModel.player2
+    )
 
     played.value = true
 }

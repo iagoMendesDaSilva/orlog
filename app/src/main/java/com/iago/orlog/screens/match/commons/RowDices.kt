@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATED_IDENTITY_EQUALS")
-
 package com.iago.orlog.screens.match.commons
 
 import android.util.Log
@@ -12,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
@@ -19,6 +19,7 @@ import com.iago.orlog.screens.match.getRandomDiceSides
 import com.iago.orlog.utils.DiceSide
 import com.iago.orlog.utils.Phase
 import com.iago.orlog.utils.Player
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,6 +31,13 @@ fun RowDices(
     enablePress: Boolean,
     onPressEndTurn: () -> Unit,
 ) {
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp *.85f
+
+    val padding = with(LocalDensity.current) {
+        screenWidth * 0.01f
+    }
 
     val openDialog = remember { mutableStateOf(false) }
     val diceInfo = remember { mutableStateOf<DiceSide?>(null) }
@@ -43,22 +51,24 @@ fun RowDices(
 
     LaunchedEffect(key1 = viewModel.turn.value, key2 = enablePress) {
         updateDices(viewModel, dicesTable, player, enablePress)
+        delay(1000L)
         iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,enablePress,onPressEndTurn)
+
     }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .height(45.dp),
+            .padding(bottom = 5.dp),
         horizontalArrangement = if (dicesTable.value.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
     ) {
         (dicesTable.value).forEachIndexed { index, item ->
             Box(
                 modifier = Modifier
-                    .width(55.dp)
-                    .height(55.dp)
-                    .padding(horizontal = 3.dp)
+                    .width(screenWidth/6)
+                    .height(screenWidth/6)
+                    .aspectRatio(1f)
+                    .padding(padding)
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
                     .combinedClickable(
                         onClick = {

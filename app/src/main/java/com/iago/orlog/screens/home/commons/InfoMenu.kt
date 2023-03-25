@@ -14,9 +14,9 @@ import com.iago.orlog.utils.Infos
 fun InfoMenu() {
     Row(
         Modifier
-            .fillMaxWidth(.75f)
+            .fillMaxWidth()
             .padding(bottom = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         InfoDesc(Infos.duration)

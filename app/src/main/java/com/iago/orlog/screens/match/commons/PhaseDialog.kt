@@ -75,20 +75,36 @@ fun PhaseDialog(
 
         Row(
             Modifier
+                .fillMaxWidth(.9f)
                 .background(
                     color = MaterialTheme.colors.onBackground,
                     shape = MaterialTheme.shapes.medium
                 )
                 .zIndex(5f)
-                .padding(vertical = 25.dp, horizontal = 50.dp),
+                .padding(25.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Row(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colors.primary)
+            ) {}
             Text(
+                modifier=Modifier.padding(horizontal = 10.dp),
                 color = MaterialTheme.colors.primary,
                 style = MaterialTheme.typography.body2,
                 text = stringResource(getPhaseName(phase)),
             )
+            Row(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colors.primary)
+            ) {}
         }
 
     }

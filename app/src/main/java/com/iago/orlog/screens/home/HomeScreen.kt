@@ -20,7 +20,7 @@ import com.iago.orlog.utils.Mode
 fun HomeScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(bottom = 15.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

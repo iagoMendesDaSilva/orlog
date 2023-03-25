@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -20,14 +22,21 @@ import com.iago.orlog.utils.CoinHeadTail
 @Composable
 fun ButtonCoin(coin: CoinHeadTail, active: Boolean?, enable: Boolean, onPress: () -> Unit) {
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val padding = with(LocalDensity.current) {
+        screenWidth * 0.02f
+    }
+
     val color =
         if (active == true) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
 
     Row(
         modifier = Modifier
-            .width(150.dp)
-            .height(150.dp)
-            .padding(10.dp)
+            .width(screenWidth*.35f)
+            .height(screenWidth*.35f)
+            .padding(padding)
             .background(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colors.onBackground,
