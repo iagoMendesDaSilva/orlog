@@ -8,6 +8,11 @@ enum class Coin {
     UNDEFINED,
 }
 
+enum class StatusInfoMatch {
+    GEMS,
+    TOKENS,
+}
+
 object Coins {
     val head =
         CoinHeadTail(title = R.string.head, image = R.drawable.coin_face, icon= R.drawable.head,)
