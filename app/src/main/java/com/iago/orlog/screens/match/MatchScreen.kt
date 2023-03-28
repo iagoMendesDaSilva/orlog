@@ -167,55 +167,58 @@ fun verifyResolutionPhase(
     val player1 = viewModel.player1
     val player2 = viewModel.player2
 
+    val player1Favor = verifyFavorResolution(player1.value)
+    val player2Favor = verifyFavorResolution(player1.value)
 
-    verifyFavorBeforeResolution(player1.value) {
-        useGodFavor(
-            context,
-            player1.value.favorResolution!!,
-            viewModel,
-            player1,
-            player2,
-            dicesSelectedPlayer1,
-            dicesSelectedPlayer2
-        )
-    }
+    val godFavorsMethods = mutableListOf<FavorConfig>()
 
-    verifyFavorBeforeResolution(player2.value) {
-        useGodFavor(
-            context,
-            player2.value.favorResolution!!,
-            viewModel,
-            player2,
-            player1,
-            dicesSelectedPlayer2,
-            dicesSelectedPlayer1
+    if (player1Favor != null)
+        godFavorsMethods.add(
+            FavorConfig(
+                player1Favor.useBeforeResolution
+            ) {
+                useGodFavor(
+                    context,
+                    player1.value.favorResolution,
+                    viewModel,
+                    player1,
+                    player2,
+                    dicesSelectedPlayer1,
+                    dicesSelectedPlayer2
+                )
+            }
         )
+
+    if (player2Favor != null)
+        godFavorsMethods.add(
+            FavorConfig(
+                player2Favor.useBeforeResolution
+            ) {
+                useGodFavor(
+                    context,
+                    player2.value.favorResolution!!,
+                    viewModel,
+                    player2,
+                    player1,
+                    dicesSelectedPlayer2,
+                    dicesSelectedPlayer1
+                )
+            }
+        )
+
+    if (player1Favor?.priority ?: 0 < player2Favor?.priority ?: 0)
+        godFavorsMethods.reverse()
+
+    godFavorsMethods.forEach {
+        if (it.useBeforeResolution)
+            it.method()
     }
 
     resolution(viewModel, dicesSelectedPlayer1, dicesSelectedPlayer2)
 
-    verifyFavorAfterResolution(player1.value) {
-        useGodFavor(
-            context,
-            player1.value.favorResolution!!,
-            viewModel,
-            player1,
-            player2,
-            dicesSelectedPlayer1,
-            dicesSelectedPlayer2
-        )
-    }
-
-    verifyFavorAfterResolution(player2.value) {
-        useGodFavor(
-            context,
-            player2.value.favorResolution!!,
-            viewModel,
-            player2,
-            player1,
-            dicesSelectedPlayer2,
-            dicesSelectedPlayer1
-        )
+    godFavorsMethods.forEach {
+        if (!it.useBeforeResolution)
+            it.method()
     }
 
     verifyEndGame(
@@ -231,22 +234,10 @@ fun verifyResolutionPhase(
 
 }
 
-fun verifyFavorAfterResolution(player: Player, callBack: () -> Unit) {
-    if (player.favorResolution?.favor != null && player.favorResolution.godId != null) {
-        val god = gods.firstOrNull { it.id == player.favorResolution.godId }
-        if (god?.useBeforeResolution == false) {
-            callBack()
-        }
-    }
-}
-
-fun verifyFavorBeforeResolution(player: Player, callBack: () -> Unit) {
-    if (player.favorResolution?.favor != null && player.favorResolution.godId != null) {
-        val god = gods.firstOrNull { it.id == player.favorResolution.godId }
-        if (god?.useBeforeResolution == true) {
-            callBack()
-        }
-    }
+fun verifyFavorResolution(player: Player): God? {
+    return if (player.favorResolution?.favor != null && player.favorResolution.godId != null)
+        gods.firstOrNull { it.id == player.favorResolution.godId }
+    else null
 }
 
 fun verifyEndGame(
@@ -359,27 +350,13 @@ fun getFinalDamage(
     playerAttacks.forEach { diceSide ->
         val defenseDiceSide =
             if (diceSide.side === DiceFace.ARROW) DiceFace.SHIELD else DiceFace.HELMET
-        verifyAttack(opponentDefensesToUse, defenseDiceSide) { damage, defensesUpdated ->
+        GodFavors.verifyAttack(opponentDefensesToUse, defenseDiceSide) { damage, defensesUpdated ->
             if (damage)
                 playerDamage += 1
             opponentDefensesToUse = defensesUpdated
         }
     }
     return playerDamage
-}
-
-fun verifyAttack(
-    opponentDefenses: MutableList<DiceSide>,
-    diceFace: DiceFace,
-    onAttack: (damage: Boolean, opponentDefenses: MutableList<DiceSide>) -> Unit
-) {
-    var damage = false
-    if (opponentDefenses.any { it.side == diceFace }) {
-        val index = opponentDefenses.indexOfFirst { it.side === diceFace }
-        opponentDefenses.removeAt(index)
-    } else
-        damage = true
-    onAttack(damage, opponentDefenses)
 }
 
 
@@ -420,26 +397,28 @@ fun chooseGodFavor(
 
 fun useGodFavor(
     context: Context,
-    favor: FavorResolution,
+    favor: FavorResolution?,
     viewModel: ViewModelOrlog,
     player: MutableState<Player>,
     opponent: MutableState<Player>,
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
     dicesSelectedOpponent: MutableState<List<DiceSide>>
 ) {
-    val godFavorID = context.getString(favor.godId!!)
-    val companionObject = GodFavors::class.companionObject
-    if (companionObject != null) {
-        val companionInstance = GodFavors::class.companionObjectInstance
-        val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
-        functionEx.call(
-            companionInstance,
-            viewModel,
-            player,
-            opponent,
-            favor.favor,
-            dicesSelectedPlayer,
-            dicesSelectedOpponent
-        )
+    if (favor?.favor != null && favor.godId != null) {
+        val godFavorID = context.getString(favor.godId)
+        val companionObject = GodFavors::class.companionObject
+        if (companionObject != null) {
+            val companionInstance = GodFavors::class.companionObjectInstance
+            val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
+            functionEx.call(
+                companionInstance,
+                viewModel,
+                player,
+                opponent,
+                favor.favor,
+                dicesSelectedPlayer,
+                dicesSelectedOpponent
+            )
+        }
     }
 }

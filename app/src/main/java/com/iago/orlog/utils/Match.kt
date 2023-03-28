@@ -32,6 +32,11 @@ enum class Phase {
     RESOLUTION_PHASE,
 }
 
+data class FavorConfig(
+    val useBeforeResolution: Boolean,
+    val method: ()->Unit,
+)
+
 data class Player(
     val ia: Boolean,
     val favorResolution: FavorResolution?,

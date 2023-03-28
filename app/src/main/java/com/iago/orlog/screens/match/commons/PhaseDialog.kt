@@ -1,11 +1,12 @@
 package com.iago.orlog.screens.match.commons
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -14,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.iago.orlog.R
 import com.iago.orlog.utils.Phase
 import kotlinx.coroutines.CoroutineScope
@@ -30,12 +30,12 @@ fun PhaseDialog(
     var dialogPhaseVisible = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = dialogPhaseShowing.value, key2 = phase) {
-        if(dialogPhaseShowing.value)
+        if (dialogPhaseShowing.value)
             dialogPhaseVisible.value = true
     }
 
-    LaunchedEffect(key1 = dialogPhaseVisible.value){
-        if(dialogPhaseVisible.value)
+    LaunchedEffect(key1 = dialogPhaseVisible.value) {
+        if (dialogPhaseVisible.value)
             showPhase(
                 coroutineScope,
                 dialogPhaseVisible,
@@ -52,7 +52,7 @@ fun PhaseDialog(
     )
 
     val alphaOpacityBackground: Float by animateFloatAsState(
-        targetValue = if (dialogPhaseVisible.value) .5f else 0f,
+        targetValue = if (dialogPhaseVisible.value) .85f else 0f,
         animationSpec = tween(
             durationMillis = 1500,
             easing = LinearEasing,
@@ -73,40 +73,12 @@ fun PhaseDialog(
         contentAlignment = Alignment.Center
     ) {
 
-        Row(
-            Modifier
-                .fillMaxWidth(.9f)
-                .background(
-                    color = MaterialTheme.colors.onBackground,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .zIndex(5f)
-                .padding(25.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colors.primary)
-            ) {}
-            Text(
-                modifier=Modifier.padding(horizontal = 10.dp),
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.body2,
-                text = stringResource(getPhaseName(phase)),
-            )
-            Row(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colors.primary)
-            ) {}
-        }
-
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            color = MaterialTheme.colors.primary,
+            style = MaterialTheme.typography.body2,
+            text = stringResource(getPhaseName(phase)),
+        )
     }
 }
 
