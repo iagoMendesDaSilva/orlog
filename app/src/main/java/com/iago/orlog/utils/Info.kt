@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.HourglassBottom
-import androidx.compose.material.icons.filled.SwitchAccount
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.iago.orlog.R
 

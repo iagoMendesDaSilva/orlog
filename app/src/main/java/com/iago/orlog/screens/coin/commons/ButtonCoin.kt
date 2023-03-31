@@ -17,10 +17,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.iago.orlog.utils.CoinHeadTail
+import com.iago.orlog.utils.Coin
 
 @Composable
-fun ButtonCoin(coin: CoinHeadTail, active: Boolean?, enable: Boolean, onPress: () -> Unit) {
+fun ButtonCoin(coin: Coin, active: Boolean?, enable: Boolean, onPress: () -> Unit) {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -29,13 +29,13 @@ fun ButtonCoin(coin: CoinHeadTail, active: Boolean?, enable: Boolean, onPress: (
         screenWidth * 0.02f
     }
 
-    val color =
-        if (active == true) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+    val color = if (active == true) MaterialTheme.colors.primary
+    else MaterialTheme.colors.secondary
 
     Row(
         modifier = Modifier
-            .width(screenWidth*.35f)
-            .height(screenWidth*.35f)
+            .width(screenWidth * .35f)
+            .height(screenWidth * .35f)
             .padding(padding)
             .background(
                 shape = MaterialTheme.shapes.medium,
@@ -61,10 +61,11 @@ fun ButtonCoin(coin: CoinHeadTail, active: Boolean?, enable: Boolean, onPress: (
         ) {
             Image(
                 colorFilter = ColorFilter.tint(color),
-                contentDescription = null,
+                contentDescription = stringResource(id = coin.title),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(35.dp).padding(bottom = 5.dp),
+                    .size(35.dp)
+                    .padding(bottom = 5.dp),
                 painter = painterResource(coin.icon),
             )
             Text(

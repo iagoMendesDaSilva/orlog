@@ -5,9 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.iago.orlog.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -20,7 +17,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         gems = 15,
         name = R.string.player1,
         godFavors = mutableListOf(),
-        coinFace = Coin.UNDEFINED,
+        coinFace = CoinSide.UNDEFINED,
         tokens = 0,
         reroll = 3,
     )
@@ -31,13 +28,13 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         gems = 15,
         name = R.string.player2,
         godFavors = mutableListOf(),
-        coinFace = Coin.UNDEFINED,
+        coinFace = CoinSide.UNDEFINED,
         tokens = 0,
         reroll = 3,
     )
 
     var round = mutableStateOf(1)
-    var turn = mutableStateOf(Coin.UNDEFINED)
+    var turn = mutableStateOf(CoinSide.UNDEFINED)
     var mode = mutableStateOf(MODES.ONE_PLAYER)
     var player1 = mutableStateOf(initialPlayer1)
     var player2 = mutableStateOf(initialPlayer2)
@@ -53,7 +50,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
             name = (if (property === "name") value else playerToChange.value.name) as Int,
             reroll = (if (property === "reroll") value else playerToChange.value.reroll) as Int,
             godFavors = (if (property === "godFavors") value else playerToChange.value.godFavors) as MutableList<God>,
-            coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as Coin,
+            coinFace = (if (property === "coinFace") value else playerToChange.value.coinFace) as CoinSide,
             tokens = (if (property === "tokens") value else playerToChange.value.tokens) as Int,
             ia = (if (property === "ia") value else playerToChange.value.ia) as Boolean,
         )
@@ -64,20 +61,16 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         mode.value = newMode
     }
 
-    fun updateTurn(newTurn: Coin) {
+    fun updateTurn(newTurn: CoinSide) {
         turn.value = newTurn
     }
 
     fun changeTurn() {
-        turn.value = if (turn.value == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
+        turn.value = if (turn.value == CoinSide.FACE_UP) CoinSide.FACE_DOWN else CoinSide.FACE_UP
     }
 
     fun getCurrentPlayer(): MutableState<Player> {
         return if (turn.value === player1.value.coinFace) player1 else player2
-    }
-
-    fun getOpponent(player: Player): MutableState<Player> {
-        return if (player.coinFace === player1.value.coinFace) player2 else player1
     }
 
     fun updateGodsList(
@@ -86,7 +79,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
         god: God,
         viewModel: ViewModelOrlog
     ) {
-        var list = mutableListOf<God>()
+        val list = mutableListOf<God>()
         list.addAll(currentGods)
         if (add)
             list.add(god)
@@ -98,7 +91,7 @@ class ViewModelOrlog @Inject constructor() : ViewModel() {
 
     fun resetGame() {
         round.value = 1
-        turn.value = Coin.UNDEFINED
+        turn.value = CoinSide.UNDEFINED
         mode.value = MODES.ONE_PLAYER
         player1.value = initialPlayer1
         player2.value = initialPlayer2

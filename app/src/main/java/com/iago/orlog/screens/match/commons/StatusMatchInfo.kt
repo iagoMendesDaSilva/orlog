@@ -12,11 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iago.orlog.commons.Logo
 import com.iago.orlog.utils.StatusInfoMatch
+import com.iago.orlog.R
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
@@ -57,7 +59,7 @@ fun StatusMatchInfo(value: Int, statusInfoMatch: StatusInfoMatch) {
             }
         else
             Icon(
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.gems),
                 modifier = Modifier
                     .size(25.dp)
                     .padding(end = 5.dp),

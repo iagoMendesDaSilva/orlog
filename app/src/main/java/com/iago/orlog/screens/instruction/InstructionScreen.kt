@@ -91,9 +91,9 @@ fun SubTitle(text: Int) {
 fun Content(text: Int) {
     Text(
         text = stringResource(text),
+        textAlign = TextAlign.Justify,
         style = MaterialTheme.typography.body1,
         color = MaterialTheme.colors.secondary,
-        textAlign = TextAlign.Justify,
         modifier = Modifier.padding(bottom = 5.dp)
     )
 }

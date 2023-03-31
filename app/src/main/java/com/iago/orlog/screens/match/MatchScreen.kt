@@ -103,43 +103,6 @@ fun MatchScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     PhaseDialog(dialogPhaseShowing, viewModel.phase.value)
 }
 
-@Composable
-fun PlayerTable(
-    modifier: Modifier,
-    viewModel: ViewModelOrlog,
-    player: MutableState<Player>,
-    dicesSelectedPlayer: MutableState<List<DiceSide>>,
-    dicesTablePlayer: MutableState<MutableList<DiceSide>>,
-    enablePress: Boolean,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        HeaderStatus(player)
-
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            RowDices(dicesSelectedPlayer, dicesTablePlayer, player, viewModel, enablePress) {
-                endTurn(viewModel, player)
-            }
-            RowSelectedDices(dicesSelectedPlayer.value)
-            FooterStatus(player, viewModel, enablePress,
-                onPressEndTurn = { endTurn(viewModel, player) },
-                pressGodFavor = { godFavor, favor ->
-                    chooseGodFavor(
-                        godFavor,
-                        favor,
-                        viewModel,
-                        player,
-                    )
-                })
-        }
-    }
-}
 
 fun verifyPhase(
     dicesTablePlayer1: MutableState<MutableList<DiceSide>>,
@@ -359,16 +322,6 @@ fun getFinalDamage(
     return playerDamage
 }
 
-
-fun endTurn(viewModel: ViewModelOrlog, player: MutableState<Player>) {
-    if (viewModel.phase.value == Phase.ROLL_PHASE)
-        viewModel.updatePlayer("reroll", player.value.reroll - 1, player)
-    if (viewModel.phase.value == Phase.GOD_FAVOR_PHASE)
-        if (player.value.favorResolution == null)
-            viewModel.updatePlayer("favorResolution", FavorResolution(null, null), player)
-    viewModel.changeTurn()
-}
-
 fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<DiceSide> {
     val dices = dices.mapIndexed { index, dice ->
         val item = dice.sides[(dice.sides.indices.random())]
@@ -385,16 +338,6 @@ fun getRandomDiceSides(diceSides: MutableList<DiceSide>? = null): MutableList<Di
     return dices
 }
 
-fun chooseGodFavor(
-    godFavor: God,
-    favor: Favor,
-    viewModel: ViewModelOrlog,
-    player: MutableState<Player>
-) {
-    viewModel.updatePlayer("favorResolution", FavorResolution(favor, godFavor.id), player)
-    endTurn(viewModel, player)
-}
-
 fun useGodFavor(
     context: Context,
     favor: FavorResolution?,
@@ -407,9 +350,11 @@ fun useGodFavor(
     if (favor?.favor != null && favor.godId != null) {
         val godFavorID = context.getString(favor.godId)
         val companionObject = GodFavors::class.companionObject
+
         if (companionObject != null) {
             val companionInstance = GodFavors::class.companionObjectInstance
             val functionEx = companionObject.functions.first { it.name == "use${godFavorID}Favor" }
+
             functionEx.call(
                 companionInstance,
                 viewModel,
@@ -419,6 +364,8 @@ fun useGodFavor(
                 dicesSelectedPlayer,
                 dicesSelectedOpponent
             )
+            val finalTokens = (player.value.tokens - favor.favor.cost).coerceAtLeast(0)
+            viewModel.updatePlayer("tokens", finalTokens, player)
         }
     }
 }

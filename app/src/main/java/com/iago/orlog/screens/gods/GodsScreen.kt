@@ -20,7 +20,6 @@ import kotlin.random.nextInt
 fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
 
     val player = viewModel.getCurrentPlayer()
-
     val listState = rememberLazyStaggeredGridState()
 
     LaunchedEffect(key1 = viewModel.turn.value) {
@@ -31,7 +30,7 @@ fun GodsScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Header(navController, player) {
+        Header(viewModel, player) {
             pressConfirmButton(navController, viewModel)
         }
         ListGods(player, viewModel, listState)
@@ -62,7 +61,6 @@ fun selectGods(
     viewModel: ViewModelOrlog,
     navController: NavHostController,
 ) {
-
     val listGods = getGods()
 
     listGods.forEach {

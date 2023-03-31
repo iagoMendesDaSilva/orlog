@@ -32,7 +32,7 @@ fun GodInfo(god: God, openDialog: MutableState<Boolean>) {
         content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(.9f)
                     .fillMaxHeight(.9f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
@@ -62,7 +62,7 @@ fun GodInfo(god: God, openDialog: MutableState<Boolean>) {
 fun Header(god: God, openDialog: MutableState<Boolean>) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.close),
             imageVector = Icons.Outlined.Close,
             tint = MaterialTheme.colors.secondary,
             modifier = Modifier

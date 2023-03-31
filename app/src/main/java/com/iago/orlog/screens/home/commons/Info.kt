@@ -2,10 +2,7 @@ package com.iago.orlog.screens.home.commons
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,7 +17,7 @@ import com.iago.orlog.utils.Info
 @Composable
 fun InfoDesc(info: Info) {
     Column(
-        modifier=Modifier.padding(horizontal = 15.dp),
+        modifier=Modifier.width(130.dp).padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
@@ -38,11 +35,12 @@ fun InfoDesc(info: Info) {
             )
         }
         Text(
+            maxLines=1,
             textAlign = TextAlign.Center,
-            text = stringResource(info.title).uppercase(),
             style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(top = 8.dp),
             color = MaterialTheme.colors.secondary,
+            modifier = Modifier.padding(top = 8.dp),
+            text = stringResource(info.title).uppercase(),
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.iago.orlog.screens.coin
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,13 +17,12 @@ import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.navigation.Screens
-import com.iago.orlog.screens.coin.commons.ButtonCoin
-import com.iago.orlog.screens.coin.commons.Coin
-import com.iago.orlog.utils.Coin
+import com.iago.orlog.screens.coin.commons.*
+import com.iago.orlog.utils.CoinSide
 import com.iago.orlog.utils.Coins
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
@@ -32,16 +30,19 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     val coroutineScope = rememberCoroutineScope()
 
     var played = remember { mutableStateOf(false) }
-    var decision = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
+    var decision = remember { mutableStateOf<CoinSide>(CoinSide.UNDEFINED) }
 
     var currentRotation = remember { mutableStateOf(0f) }
     val rotation = remember { Animatable(currentRotation.value) }
-    var coinResult = remember { mutableStateOf<Coin>(Coin.UNDEFINED) }
+    var coinResult = remember { mutableStateOf<CoinSide>(CoinSide.UNDEFINED) }
 
     LaunchedEffect(key1 = decision.value) {
-        if (decision.value != Coin.UNDEFINED && coinResult.value == Coin.UNDEFINED)
+        if (decision.value != CoinSide.UNDEFINED && coinResult.value == CoinSide.UNDEFINED)
             animation(rotation, currentRotation, coinResult, coroutineScope) {
-                decideTurns(decision.value, coinResult.value, viewModel, played)
+                coroutineScope.launch {
+                    delay(600L)
+                    decideTurns(decision.value, coinResult.value, viewModel, played)
+                }
             }
     }
 
@@ -62,108 +63,9 @@ fun CoinScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     }
 }
 
-@Composable
-fun DialogResult(
-    navController: NavHostController,
-    decision: Coin,
-    coinResult: Coin
-) {
-    val winOrLose = if (decision == coinResult) R.string.won else R.string.lost
-    val player = if (decision == coinResult) R.string.you_are_player1 else R.string.you_are_player2
-
-    Dialog(
-        onDismissRequest = {},
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colors.onBackground,
-                        shape = MaterialTheme.shapes.medium,
-                    )
-                    .padding(vertical = 40.dp, horizontal = 25.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
-                Text(
-                    style = MaterialTheme.typography.h1,
-                    color = MaterialTheme.colors.secondary,
-                    text = stringResource(winOrLose),
-                )
-                Text(
-                    style = MaterialTheme.typography.subtitle2,
-                    color = MaterialTheme.colors.primary,
-                    text = stringResource(player),
-                )
-                Spacer(modifier = Modifier.height(25.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(.9f)
-                        .background(
-                            shape = MaterialTheme.shapes.large,
-                            color = MaterialTheme.colors.onBackground,
-                        )
-                        .border(
-                            width = 1.dp,
-                            shape = MaterialTheme.shapes.large,
-                            color = MaterialTheme.colors.secondary,
-                        )
-                        .padding(vertical = 12.dp, horizontal = 20.dp)
-                        .clickable { navController.navigate(Screens.GodsScreen.name) },
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        style = MaterialTheme.typography.body2,
-                        color = MaterialTheme.colors.secondary,
-                        text = stringResource(R.string.select_gods_favors),
-                    )
-                }
-            }
-        },
-    )
-}
-
-@Composable
-fun Header() {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-        Text(
-            text = stringResource( R.string.coin),
-            style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.primary,
-        )
-        Text(
-            text = stringResource( R.string.coin_desc),
-            style = MaterialTheme.typography.h2,
-            color = MaterialTheme.colors.secondary,
-        )
-    }
-}
-
-@Composable
-fun ButtonsHeadNTail(decision: MutableState<Coin>) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        ButtonCoin(
-            coin = Coins.head,
-            active = decision.value == Coin.FACE_UP,
-            enable = decision.value == Coin.UNDEFINED
-        ) {
-            decision.value = Coin.FACE_UP
-        }
-        ButtonCoin(
-            coin = Coins.tail,
-            enable = decision.value == Coin.UNDEFINED,
-            active = decision.value == Coin.FACE_DOWN
-        ) {
-            decision.value = Coin.FACE_DOWN
-        }
-    }
-}
-
 fun decideTurns(
-    decision: Coin,
-    coinResult: Coin,
+    decision: CoinSide,
+    coinResult: CoinSide,
     viewModel: ViewModelOrlog,
     played: MutableState<Boolean>
 ) {
@@ -182,20 +84,20 @@ fun decideTurns(
     played.value = true
 }
 
-fun getOppositeCoin(coin: Coin): Coin {
-    return if (coin == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
+fun getOppositeCoin(coin: CoinSide): CoinSide {
+    return if (coin == CoinSide.FACE_UP) CoinSide.FACE_DOWN else CoinSide.FACE_UP
 }
 
 fun animation(
     rotation: Animatable<Float, AnimationVector1D>,
     currentRotation: MutableState<Float>,
-    coinResult: MutableState<Coin>,
+    coinResult: MutableState<CoinSide>,
     coroutineScope: CoroutineScope,
     callBack: () -> Unit,
 ) {
     coroutineScope.launch {
 
-        coinResult.value = Coin.FACE_UP
+        coinResult.value = CoinSide.FACE_UP
         val numberRotations = (5..10).random()
 
         rotation.animateTo(
@@ -208,7 +110,7 @@ fun animation(
         ) {
             currentRotation.value = value
             coinResult.value =
-                if (coinResult.value == Coin.FACE_UP) Coin.FACE_DOWN else Coin.FACE_UP
+                if (coinResult.value == CoinSide.FACE_UP) CoinSide.FACE_DOWN else CoinSide.FACE_UP
         }
         callBack()
     }

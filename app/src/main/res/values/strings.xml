@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Orlog</string>
+    <string name="app_name">Orlog Board Game</string>
     <string name="symbol">⌘</string>
     <string name="orlog">Orlog</string>
     <string name="instructions">Game Flow</string>
@@ -26,6 +26,7 @@
     <string name="two_player">2 Players</string>
     <string name="duration_info">10 – 15 Mins</string>
     <string name="gems_info">15 Gems</string>
+    <string name="gems">Gems</string>
     <string name="god_favors_info">3 God Favors</string>
     <string name="board_game">Board Game</string>
     <string name="how_to_play">How to Play</string>
@@ -97,8 +98,9 @@
     <string name="desc_favor_god_heimdall" >+ %1$d Health per block</string>
     <string name="head">Head</string>
     <string name="tail">Tail</string>
-    <string name="coin">Flip the coin</string>
-    <string name="coin_desc">Select head or tail</string>
+    <string name="flip_coin">Flip the coin</string>
+    <string name="coin">Coin</string>
+    <string name="coin_desc">Select Head or Tail.</string>
     <string name="shield">Shield</string>
     <string name="hand">Hand</string>
     <string name="arrow">Arrow</string>
@@ -140,5 +142,9 @@
     <string name="_var">Var</string>
     <string name="thrymr">Thrymr</string>
     <string name="tyr">Tyr</string>
-    <string name="not_available">Not Available</string>
+    <string name="coming_soon">Coming soon!</string>
+    <string name="greetings">Greetings</string>
+    <string name="welcome">Welcome to Orlog Board Game, start your journey and challenge yourself.</string>
+    <string name="close">Close</string>
+    <string name="notification">Notification</string>
 </resources>

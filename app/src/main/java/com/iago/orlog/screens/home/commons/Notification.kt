@@ -16,9 +16,11 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.iago.orlog.R
 
 @Composable
 fun Notification() {
@@ -39,7 +41,7 @@ fun Notification() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.notification),
             modifier = Modifier.size(22.dp),
             tint = MaterialTheme.colors.secondary,
             imageVector = Icons.Default.Notifications,
@@ -47,7 +49,7 @@ fun Notification() {
         Column(modifier = Modifier.padding(horizontal = 7.dp)) {
             Text(
                 maxLines = 1,
-                text = "Greetings",
+                text = stringResource(R.string.greetings),
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.h3,
                 color = MaterialTheme.colors.secondary,
@@ -56,14 +58,14 @@ fun Notification() {
                 modifier = Modifier.fillMaxWidth(.9f),
                 maxLines = if (expanded) 3 else 1,
                 overflow = TextOverflow.Ellipsis,
-                text = "Welcome to Orlog Board game, start your journey among your friends,",
+                text = stringResource(R.string.welcome),
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.subtitle2,
                 color = MaterialTheme.colors.secondary,
             )
         }
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.arrow),
             modifier = Modifier.size(22.dp),
             tint = MaterialTheme.colors.secondary,
             imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,

@@ -13,6 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.utils.DiceSide
 
@@ -35,8 +36,8 @@ fun RowSelectedDices(dices: List<DiceSide>) {
         (0..5).forEachIndexed { index, _ ->
             Box(
                 modifier = Modifier
-                    .width(screenWidth/6)
-                    .height(screenWidth/6)
+                    .width(screenWidth / 6)
+                    .height(screenWidth / 6)
                     .aspectRatio(1f)
                     .padding(padding)
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp)),
@@ -46,7 +47,7 @@ fun RowSelectedDices(dices: List<DiceSide>) {
                     if (dices[index].favor)
                         DashedStroke()
                     Image(
-                        contentDescription = null,
+                        contentDescription = stringResource(id = dices[index].name),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxSize()

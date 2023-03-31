@@ -1,6 +1,5 @@
 package com.iago.orlog.screens.coin.commons
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.Image
@@ -10,15 +9,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.iago.orlog.utils.Coin
+import com.iago.orlog.utils.CoinSide
 import com.iago.orlog.utils.Coins
+import com.iago.orlog.R
 
 @Composable
 fun Coin(
     rotation: Animatable<Float, AnimationVector1D>,
-    coinResult: Coin,
+    coinResult: CoinSide,
     size: Dp,
 ) {
 
@@ -26,7 +27,7 @@ fun Coin(
         Coins.tail.image
     else Coins.head.image
 
-    val imageDecision =if (coinResult == Coin.FACE_DOWN)
+    val imageDecision =if (coinResult == CoinSide.FACE_DOWN)
         Coins.tail.image
     else Coins.head.image
 
@@ -43,7 +44,7 @@ fun Coin(
         Image(
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.coin),
             painter = painterResource(
                 if(rotation.isRunning) imageWhileRunning else imageDecision
             ),

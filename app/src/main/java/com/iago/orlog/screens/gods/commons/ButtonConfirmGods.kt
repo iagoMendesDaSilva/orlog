@@ -44,7 +44,7 @@ fun ButtonConfirmGods(active: Boolean, onPress: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.confirm),
             imageVector = Icons.Outlined.Check,
             tint = MaterialTheme.colors.secondary,
             modifier = Modifier

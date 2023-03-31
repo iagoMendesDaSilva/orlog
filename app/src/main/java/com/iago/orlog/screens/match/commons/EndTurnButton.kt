@@ -21,12 +21,10 @@ import com.iago.orlog.R
 
 @Composable
 fun EndTurnButton(
-    enable: Boolean,
     onPress: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .alpha(if (enable) 1f else .5f)
             .fillMaxWidth()
             .aspectRatio(2f)
             .background(
@@ -39,14 +37,13 @@ fun EndTurnButton(
                 shape = MaterialTheme.shapes.small,
             )
             .clickable {
-                if (enable)
-                    onPress()
+                onPress()
             },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.end_turn),
             modifier = Modifier.size(25.dp),
             tint = MaterialTheme.colors.primary,
             imageVector = Icons.Default.HourglassEmpty,

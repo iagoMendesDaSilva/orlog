@@ -35,7 +35,7 @@ fun GodInfoMatch(
         content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(.9f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,
@@ -95,7 +95,7 @@ fun ButtonChoose(
 fun Header(god: God, openDialog: MutableState<Boolean>) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.close),
             imageVector = Icons.Outlined.Close,
             tint = MaterialTheme.colors.secondary,
             modifier = Modifier

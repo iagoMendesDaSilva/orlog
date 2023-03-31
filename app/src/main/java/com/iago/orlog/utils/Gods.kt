@@ -25,11 +25,7 @@ open class God(
     val favors: List<Favor>,
     val description: Int,
     val useBeforeResolution: Boolean,
-) {
-    fun useEffect(index: Int): Favor {
-        return favors[index]
-    }
-}
+)
 
 val gods = listOf<God>(
     God(
@@ -297,7 +293,7 @@ val gods = listOf<God>(
 class GodFavors {
     companion object {
 
-        const val GEMS = 15
+        private const val GEMS = 15
 
         fun useThorFavor(
             viewModel: ViewModelOrlog,

@@ -13,6 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.screens.match.getRandomDiceSides
@@ -33,7 +34,7 @@ fun RowDices(
 ) {
 
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp *.85f
+    val screenWidth = configuration.screenWidthDp.dp * .85f
 
     val padding = with(LocalDensity.current) {
         screenWidth * 0.01f
@@ -56,20 +57,28 @@ fun RowDices(
 
     LaunchedEffect(key1 = enablePress) {
         delay(1200L)
-        iaSelectDicesAutomatic(viewModel,dicesTable,dicesSelectedPlayer,player,enablePress,onPressEndTurn)
+        iaSelectDicesAutomatic(
+            viewModel,
+            dicesTable,
+            dicesSelectedPlayer,
+            player,
+            enablePress,
+            onPressEndTurn
+        )
     }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 5.dp),
-        horizontalArrangement = if (dicesTable.value.size != 6) Arrangement.Center else Arrangement.SpaceBetween,
+        horizontalArrangement = if (dicesTable.value.size != 6)
+            Arrangement.Center else Arrangement.SpaceBetween,
     ) {
         (dicesTable.value).forEachIndexed { index, item ->
             Box(
                 modifier = Modifier
-                    .width(screenWidth/6)
-                    .height(screenWidth/6)
+                    .width(screenWidth / 6)
+                    .height(screenWidth / 6)
                     .aspectRatio(1f)
                     .padding(padding)
                     .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
@@ -88,7 +97,7 @@ fun RowDices(
                 if (item.favor)
                     DashedStroke()
                 Image(
-                    contentDescription = null,
+                    contentDescription = stringResource(id = item.name),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
@@ -130,7 +139,7 @@ fun selectDicesAutomatic(
     dicesSelectedPlayer: MutableState<List<DiceSide>>,
 ) {
     var randomSize = (0 until dicesTable.value.size).random()
-    if (randomSize === 0) randomSize = 1
+    if (randomSize == 0) randomSize = 1
     val randomItems = dicesTable.value.shuffled().take(randomSize)
     randomItems.forEachIndexed { _, diceSide ->
         val index = dicesTable.value.indexOf(diceSide)

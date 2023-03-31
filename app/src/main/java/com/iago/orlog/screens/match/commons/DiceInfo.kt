@@ -126,7 +126,7 @@ fun ImageDiceSide(diceSide: DiceSide, active: Boolean, favor: Boolean) {
                     )
             ) {}
         Image(
-            contentDescription = null,
+            contentDescription = stringResource(id = diceSide.name),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .width(55.dp)

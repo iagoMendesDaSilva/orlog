@@ -12,7 +12,6 @@ import com.iago.orlog.utils.StatusInfoMatch
 fun HeaderStatus(
     player: MutableState<Player>,
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()

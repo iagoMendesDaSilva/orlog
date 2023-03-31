@@ -9,17 +9,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.iago.orlog.R
 import com.iago.orlog.ViewModelOrlog
 import com.iago.orlog.utils.Player
 
 @Composable
 fun Header(
-    navController: NavHostController,
+    viewModel: ViewModelOrlog,
     player: MutableState<Player>,
-    onPress:()->Unit
+    onPress: () -> Unit
 ) {
+
+    val notIaPlayer = if (viewModel.player1.value.ia)
+        viewModel.player2 else viewModel.player1
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +32,7 @@ fun Header(
     ) {
         Column() {
             Text(
-                text = stringResource(player.value.name),
+                text = stringResource(notIaPlayer.value.name),
                 style = MaterialTheme.typography.h1,
                 color = MaterialTheme.colors.primary,
             )
@@ -40,7 +43,7 @@ fun Header(
             )
         }
         ButtonConfirmGods(player.value.godFavors.size === 3) {
-           onPress()
+            onPress()
         }
     }
 }

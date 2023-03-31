@@ -48,10 +48,11 @@ fun ListModes(
         val current = gameModes[index]
         val currentIndex = gameModes.indexOf(current)
 
-        val next =
-            if (currentIndex == gameModes.size - 1) gameModes[0] else gameModes[currentIndex + 1]
-        val previous =
-            if (currentIndex == 0) gameModes[gameModes.size - 1] else gameModes[currentIndex - 1]
+        val next = if (currentIndex == gameModes.size - 1) gameModes[0]
+        else gameModes[currentIndex + 1]
+
+        val previous = if (currentIndex == 0) gameModes[gameModes.size - 1]
+        else gameModes[currentIndex - 1]
 
         Row(
             modifier = Modifier
@@ -59,11 +60,11 @@ fun ListModes(
                 .height(200.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
             GodFavorMode(
                 index > 0,
                 index,
-                previous, Modifier
+                previous,
+                Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .weight(.5f)
@@ -75,7 +76,9 @@ fun ListModes(
             )
             GodFavorMode(
                 true,
-                index, current, Modifier
+                index,
+                current,
+                Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .weight(1f)
@@ -84,13 +87,17 @@ fun ListModes(
                             viewModel.updateMode(current.mode)
                             navController.navigate(Screens.CoinScreen.name)
                         } else {
-                            Toast.makeText(context, R.string.not_available,Toast.LENGTH_SHORT).show()
+                            Toast
+                                .makeText(context, R.string.coming_soon, Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
             )
             GodFavorMode(
                 index < gameModes.size - 1,
-                index, next, Modifier
+                index,
+                next,
+                Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .weight(.5f)
@@ -125,11 +132,11 @@ fun GodFavorMode(show: Boolean, index: Int, current: Mode, modifier: Modifier) {
                 contentDescription = stringResource(id = current.name),
             )
             Text(
-                modifier = Modifier.alpha(if (current.enabled) 1f else .5f),
                 maxLines = 2,
                 style = MaterialTheme.typography.h3,
+                text = stringResource(id = current.name),
+                modifier = Modifier.alpha(if (current.enabled) 1f else .5f),
                 color = if (isCenter) MaterialTheme.colors.secondary else MaterialTheme.colors.secondaryVariant,
-                text = stringResource(id = current.name)
             )
         }
     }
