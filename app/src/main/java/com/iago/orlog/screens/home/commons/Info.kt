@@ -9,6 +9,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -16,8 +19,16 @@ import com.iago.orlog.utils.Info
 
 @Composable
 fun InfoDesc(info: Info) {
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val sizeItem = with(LocalDensity.current) {
+        screenWidth * 0.33f
+    }
+
     Column(
-        modifier=Modifier.width(130.dp).padding(horizontal = 12.dp),
+        modifier=Modifier.width(sizeItem).padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(

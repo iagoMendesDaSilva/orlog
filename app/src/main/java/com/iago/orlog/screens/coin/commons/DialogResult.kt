@@ -33,7 +33,7 @@ fun DialogResult(
         content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(.9f)
+                    .fillMaxWidth(.95f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,

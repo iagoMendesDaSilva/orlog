@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -115,6 +117,13 @@ fun ListModes(
 @Composable
 fun GodFavorMode(show: Boolean, index: Int, current: Mode, modifier: Modifier) {
 
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val sizeItem = with(LocalDensity.current) {
+        screenHeight * 0.17f
+    }
+
     val isCenter = (gameModes.indexOf(current) == index)
 
     Column(
@@ -127,7 +136,7 @@ fun GodFavorMode(show: Boolean, index: Int, current: Mode, modifier: Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .alpha(if (current.enabled) 1f else .5f)
-                    .height(if (isCenter) 175.dp else 125.dp),
+                    .height(if (isCenter) sizeItem else sizeItem - 50.dp),
                 painter = painterResource(id = current.icon),
                 contentDescription = stringResource(id = current.name),
             )

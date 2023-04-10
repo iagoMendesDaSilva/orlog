@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -27,6 +29,17 @@ fun HomeScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
         }
     }
 
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val padding = with(LocalDensity.current) {
+        screenHeight * 0.02f
+    }
+
+    val logoSize = with(LocalDensity.current) {
+        screenHeight * 0.15f
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,10 +49,12 @@ fun HomeScreen(navController: NavHostController, viewModel: ViewModelOrlog) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Title()
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(padding))
             Notification()
         }
-        Logo(125.dp, MaterialTheme.colors.primary)
+        Spacer(modifier = Modifier.height(padding * 2))
+        Logo(logoSize, MaterialTheme.colors.primary)
+        Spacer(modifier = Modifier.height(padding * 2))
         InfoMenu()
         ListModes(navController, viewModel)
     }

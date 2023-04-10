@@ -32,8 +32,8 @@ fun GodInfo(god: God, openDialog: MutableState<Boolean>) {
         content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(.9f)
-                    .fillMaxHeight(.9f)
+                    .fillMaxWidth(.95f)
+                    .fillMaxHeight(.95f)
                     .background(
                         color = MaterialTheme.colors.onBackground,
                         shape = MaterialTheme.shapes.medium,

@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -74,38 +75,45 @@ fun RowDices(
         horizontalArrangement = if (dicesTable.value.size != 6)
             Arrangement.Center else Arrangement.SpaceBetween,
     ) {
-        (dicesTable.value).forEachIndexed { index, item ->
+        if (dicesTable.value.isEmpty())
             Box(
                 modifier = Modifier
-                    .width(screenWidth / 6)
+                    .fillMaxWidth()
                     .height(screenWidth / 6)
-                    .aspectRatio(1f)
-                    .padding(padding)
-                    .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
-                    .combinedClickable(
-                        onClick = {
-                            if (enablePress && player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
-                                selectDice(dicesSelectedPlayer, item, dicesTable, index)
-                        },
-                        onLongClick = {
-                            diceInfo.value = item
-                            openDialog.value = true
-                        }
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (item.favor)
-                    DashedStroke()
-                Image(
-                    contentDescription = stringResource(id = item.name),
-                    contentScale = ContentScale.Fit,
+            )
+        else
+            (dicesTable.value).forEachIndexed { index, item ->
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(5.dp)),
-                    painter = painterResource(item.img),
-                )
+                        .width(screenWidth / 6)
+                        .height(screenWidth / 6)
+                        .aspectRatio(1f)
+                        .padding(padding)
+                        .background(MaterialTheme.colors.onBackground, RoundedCornerShape(5.dp))
+                        .combinedClickable(
+                            onClick = {
+                                if (enablePress && player.value.coinFace === viewModel.turn.value && viewModel.phase.value === Phase.ROLL_PHASE)
+                                    selectDice(dicesSelectedPlayer, item, dicesTable, index)
+                            },
+                            onLongClick = {
+                                diceInfo.value = item
+                                openDialog.value = true
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (item.favor)
+                        DashedStroke()
+                    Image(
+                        contentDescription = stringResource(id = item.name),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(5.dp)),
+                        painter = painterResource(item.img),
+                    )
+                }
             }
-        }
     }
 }
 
