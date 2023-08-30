@@ -6,3 +6,5 @@ Orlog Board Game is a dice game in which the contestants attempt to reduce their
 
 <img src="/demonstration/mockup.png"/><br>
 
+**Note: We are currently in the process of developing a server-side solution to support online play. The Orlog Board Game will be available on the Play Store again once this update is complete.**
+
